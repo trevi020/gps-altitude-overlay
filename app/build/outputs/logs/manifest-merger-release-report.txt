@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-38:12
+ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-40:12
+INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-40:12
+INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-40:12
+INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:2:1-40:12
 MERGED from [androidx.databinding:viewbinding:8.2.0] /home/vscode/.gradle/caches/transforms-3/e0701fc0067d4d42623792928853f099/transformed/viewbinding-8.2.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.11.0] /home/vscode/.gradle/caches/transforms-3/8f233cd207c72d15e2cbf7d39024ac77/transformed/material-1.11.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/vscode/.gradle/caches/transforms-3/ad0352c600be7f232d7167d1af9df1b7/transformed/constraintlayout-2.1.4/AndroidManifest.xml:2:1-11:12
@@ -79,8 +79,8 @@ ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:13:
 	android:name
 		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:13:22-83
 application
-ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:15:5-36:19
-INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:15:5-36:19
+ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:15:5-38:19
+INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:15:5-38:19
 MERGED from [com.google.android.material:material:1.11.0] /home/vscode/.gradle/caches/transforms-3/8f233cd207c72d15e2cbf7d39024ac77/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] /home/vscode/.gradle/caches/transforms-3/8f233cd207c72d15e2cbf7d39024ac77/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/vscode/.gradle/caches/transforms-3/ad0352c600be7f232d7167d1af9df1b7/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
@@ -110,35 +110,39 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /home/vscode/.gradle/caches
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] /home/vscode/.gradle/caches/transforms-3/0d4ffc60e85a7c7f9fbeb27599893adc/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
 	android:label
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:18:9-41
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:20:9-41
+	android:roundIcon
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:17:9-54
+	android:icon
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:16:9-43
 	android:allowBackup
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:16:9-35
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:18:9-35
 	android:theme
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:19:9-53
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:21:9-53
 activity#com.example.altitudeoverlay.MainActivity
-ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:21:9-28:20
+ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:23:9-30:20
 	android:exported
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:23:13-36
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:25:13-36
 	android:name
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:22:13-41
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:24:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:24:13-27:29
+ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:26:13-29:29
 action#android.intent.action.MAIN
-ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:25:17-69
+ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:27:17-69
 	android:name
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:25:25-66
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:27:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:26:17-77
+ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:28:17-77
 	android:name
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:26:27-74
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:28:27-74
 service#com.example.altitudeoverlay.LocationOverlayService
-ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:31:9-34:40
+ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:33:9-36:40
 	android:exported
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:34:13-37
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:36:13-37
 	android:foregroundServiceType
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:33:13-53
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:35:13-53
 	android:name
-		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:32:13-51
+		ADDED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml:34:13-51
 uses-sdk
 INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /workspaces/gps-altitude-overlay/app/src/main/AndroidManifest.xml
