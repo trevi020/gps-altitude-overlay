@@ -3,8 +3,10 @@ package com.example.altitudeoverlay
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startButton: Button
     private lateinit var stopButton: Button
     private val PERMISSION_REQUEST_CODE = 100
+    private val OVERLAY_PERMISSION_REQUEST_CODE = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,48 +28,80 @@ class MainActivity : AppCompatActivity() {
         stopButton = findViewById(R.id.btn_stop)
 
         startButton.setOnClickListener {
-            if (hasRequiredPermissions()) {
-                startOverlay()
-            } else {
-                requestPermissions()
-            }
+            checkPermissionsAndStart()
         }
 
         stopButton.setOnClickListener {
             stopOverlay()
         }
 
-        // Disabilita il pulsante stop inizialmente
         stopButton.isEnabled = false
     }
 
-    private fun hasRequiredPermissions(): Boolean {
+    private fun checkPermissionsAndStart() {
+        if (!hasOverlayPermission()) {
+            requestOverlayPermission()
+            return
+        }
+        if (!hasLocationPermission()) {
+            requestLocationPermissions()
+            return
+        }
+        startOverlay()
+    }
+
+    private fun hasOverlayPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(this)
+        } else {
+            true
+        }
+    }
+
+    private fun hasLocationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED &&
-        ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.SYSTEM_ALERT_WINDOW
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestPermissions() {
+    private fun requestOverlayPermission() {
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:$packageName")
+        )
+        startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
+        Toast.makeText(
+            this,
+            "Attiva il permesso overlay per questa app, poi torna indietro",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun requestLocationPermissions() {
         val permissions = mutableListOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.SYSTEM_ALERT_WINDOW
+            Manifest.permission.ACCESS_COARSE_LOCATION
         )
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             permissions.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
         }
-
         ActivityCompat.requestPermissions(
             this,
             permissions.toTypedArray(),
             PERMISSION_REQUEST_CODE
         )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
+            if (hasOverlayPermission()) {
+                checkPermissionsAndStart()
+            } else {
+                Toast.makeText(this, "Permesso overlay non concesso", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -79,11 +114,7 @@ class MainActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 startOverlay()
             } else {
-                Toast.makeText(
-                    this,
-                    "Permessi necessari per il funzionamento dell'app",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Permesso localizzazione necessario", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -95,7 +126,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             startService(intent)
         }
-
         startButton.isEnabled = false
         stopButton.isEnabled = true
         Toast.makeText(this, "Overlay avviato", Toast.LENGTH_SHORT).show()
@@ -104,7 +134,6 @@ class MainActivity : AppCompatActivity() {
     private fun stopOverlay() {
         val intent = Intent(this, LocationOverlayService::class.java)
         stopService(intent)
-
         startButton.isEnabled = true
         stopButton.isEnabled = false
         Toast.makeText(this, "Overlay fermato", Toast.LENGTH_SHORT).show()
