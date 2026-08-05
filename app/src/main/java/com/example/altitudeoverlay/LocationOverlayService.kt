@@ -3,13 +3,16 @@ package com.example.altitudeoverlay
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.view.Gravity
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.WindowManager
 import android.widget.TextView
@@ -29,6 +32,8 @@ class LocationOverlayService : Service() {
     private lateinit var overlayParams: WindowManager.LayoutParams
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private lateinit var gestureDetector: GestureDetector
+    private lateinit var prefs: SharedPreferences
     private var isOverlayShowing = false
 
     // Stato per il trascinamento
@@ -38,10 +43,34 @@ class LocationOverlayService : Service() {
     private var initialTouchY = 0f
     private var isDragging = false
 
+    // Dimensioni disponibili per l'overlay (ciclo: PICCOLA -> MEDIA -> GRANDE -> PICCOLA ...)
+    private enum class OverlaySize(val textSizeSp: Float, val paddingPx: Int) {
+        PICCOLA(16f, 24),
+        MEDIA(24f, 32),
+        GRANDE(34f, 40)
+    }
+
+    private var currentSize: OverlaySize = OverlaySize.PICCOLA
+
+    companion object {
+        private const val PREFS_NAME = "overlay_prefs"
+        private const val KEY_SIZE = "overlay_size"
+    }
+
     override fun onCreate() {
         super.onCreate()
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+        // Ripristina l'ultima dimensione scelta (default: PICCOLA)
+        val savedSizeName = prefs.getString(KEY_SIZE, OverlaySize.PICCOLA.name)
+        currentSize = try {
+            OverlaySize.valueOf(savedSizeName ?: OverlaySize.PICCOLA.name)
+        } catch (e: IllegalArgumentException) {
+            OverlaySize.PICCOLA
+        }
+
         setupOverlay()
         startLocationUpdates()
         createNotification()
@@ -50,12 +79,11 @@ class LocationOverlayService : Service() {
     private fun setupOverlay() {
         overlayView = TextView(this).apply {
             text = "Altitudine: --"
-            textSize = 16f
             setTextColor(0xFFFFFFFF.toInt())
             setBackgroundColor(0x99000000.toInt())
-            setPadding(24, 20, 24, 20)
             gravity = Gravity.CENTER
         }
+        applySizeToView()
 
         overlayParams = WindowManager.LayoutParams().apply {
             type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -65,7 +93,7 @@ class LocationOverlayService : Service() {
                 WindowManager.LayoutParams.TYPE_PHONE
             }
             format = PixelFormat.TRANSLUCENT
-            // NOTA: niente FLAG_NOT_TOUCHABLE, altrimenti non si può trascinare
+            // NOTA: niente FLAG_NOT_TOUCHABLE, altrimenti non si può trascinare/toccare
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
@@ -76,8 +104,19 @@ class LocationOverlayService : Service() {
             y = 150
         }
 
-        // Listener per il trascinamento con il dito
+        // GestureDetector per riconoscere il doppio tap senza interferire col drag
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                cycleOverlaySize()
+                return true
+            }
+        })
+
+        // Listener combinato: doppio tap per cambiare dimensione, drag per spostare
         overlayView.setOnTouchListener { _, event ->
+            // Passa sempre l'evento al gesture detector per intercettare il doppio tap
+            gestureDetector.onTouchEvent(event)
+
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     initialX = overlayParams.x
@@ -115,6 +154,34 @@ class LocationOverlayService : Service() {
         isOverlayShowing = true
     }
 
+    /**
+     * Applica la dimensione corrente (testo + padding) alla view dell'overlay.
+     */
+    private fun applySizeToView() {
+        overlayView.textSize = currentSize.textSizeSp
+        val p = currentSize.paddingPx
+        overlayView.setPadding(p, (p * 0.8).toInt(), p, (p * 0.8).toInt())
+    }
+
+    /**
+     * Passa alla dimensione successiva nel ciclo PICCOLA -> MEDIA -> GRANDE -> PICCOLA.
+     * Poiché width/height dell'overlay sono WRAP_CONTENT, basta aggiornare la view
+     * e poi ri-applicare il layout: Android ricalcola automaticamente le dimensioni.
+     */
+    private fun cycleOverlaySize() {
+        val values = OverlaySize.entries.toTypedArray()
+        val nextIndex = (currentSize.ordinal + 1) % values.size
+        currentSize = values[nextIndex]
+
+        applySizeToView()
+
+        // Forza il ricalcolo del layout (WRAP_CONTENT) mantenendo la posizione x/y attuale
+        windowManager.updateViewLayout(overlayView, overlayParams)
+
+        // Salva la preferenza per la prossima apertura
+        prefs.edit().putString(KEY_SIZE, currentSize.name).apply()
+    }
+
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
@@ -149,7 +216,7 @@ class LocationOverlayService : Service() {
 
     private fun createNotification() {
         val channelId = "altitude_overlay_channel"
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
@@ -162,7 +229,7 @@ class LocationOverlayService : Service() {
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle("Overlay Altitudine Attivo")
-            .setContentText("Monitoraggio posizione in corso...")
+            .setContentText("Monitoraggio posizione in corso... (doppio tap per cambiare dimensione)")
             .setSmallIcon(android.R.drawable.ic_menu_mylocation)
             .build()
 
@@ -176,7 +243,7 @@ class LocationOverlayService : Service() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        
+
         if (isOverlayShowing) {
             windowManager.removeView(overlayView)
         }
