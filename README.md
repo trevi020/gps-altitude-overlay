@@ -1,22 +1,35 @@
-MIT License
+# 🧭 Overlay Altitudine GPS
 
-Copyright (c) 2026 trevi020
+![Version](https://img.shields.io/badge/version-0.3-blue)
+![Platform](https://img.shields.io/badge/platform-Android%205.0%2B-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+App Android che mostra un overlay flottante con l'altitudine GPS in tempo reale, utilizzabile sopra qualsiasi altra app — perfetto per la navigazione con Google Maps.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+## ⬇️ Download
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-EOF
+L'ultima versione è sempre disponibile nella pagina delle [Release](../../releases/latest) — scarica `app-release.apk` e installalo direttamente sul telefono (serve abilitare "Installa da fonti sconosciute").
+
+## ✨ Funzionalità
+
+- **Overlay sempre visibile**, anche sopra Google Maps e altre app
+- **Trascinabile** — sposta l'overlay dove preferisci con il dito
+- **Ridimensionabile** — doppio tap per ciclare tra 3 dimensioni (piccola/media/grande)
+- **Correzione geoidale configurabile** — mostra l'altitudine reale sul livello del mare, non quella grezza ellissoidica WGS84 restituita dal GPS (impostabile per qualsiasi zona del mondo)
+- **Basso consumo energetico** tramite `FusedLocationProviderClient`
+- Aggiornamento della posizione ogni secondo
+
+## 📱 Come si usa
+
+1. Apri l'app e inserisci il valore di correzione geoide per la tua zona (in Italia settentrionale è circa **47**)
+2. Tocca **"Avvia Overlay"**
+3. Concedi i permessi richiesti (localizzazione + overlay su altre app)
+4. Apri Google Maps o qualsiasi altra app — l'overlay resta visibile
+5. **Trascina** l'overlay per riposizionarlo, **doppio tap** per cambiarne la dimensione
+
+## 🛠️ Build da sorgente
+
+Prerequisiti: JDK 17, Android SDK (API 34), Gradle 8.5 (gestito automaticamente dal wrapper incluso).
+
+\`\`\`bash
+git clone
