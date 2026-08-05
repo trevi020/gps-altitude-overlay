@@ -3223,6 +3223,7 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btn_save_correction
 id btn_start
 id btn_stop
 id buttonPanel
@@ -3299,6 +3300,7 @@ id easeInOut
 id easeOut
 id east
 id edge
+id edit_geoid_correction
 id edit_query
 id edit_text_id
 id elastic
