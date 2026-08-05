@@ -208,11 +208,13 @@ class LocationOverlayService : Service() {
     }
 
     private fun updateOverlay(location: Location) {
-        val altitude = location.altitude.toInt()
-        val accuracy = location.accuracy.toInt()
-        val text = "⛰ ${altitude}m (±${accuracy}m)"
-        overlayView.text = text
-    }
+    val altitudeGrezza = location.altitude
+    val undulation = GeoidCorrection.getUndulation(this)
+    val altitudeCorretta = GeoidCorrection.toOrthometricAltitude(altitudeGrezza, undulation).toInt()
+    val accuracy = location.accuracy.toInt()
+    val text = "⛰ ${altitudeCorretta}m (±${accuracy}m)"
+    overlayView.text = text
+}
 
     private fun createNotification() {
         val channelId = "altitude_overlay_channel"
