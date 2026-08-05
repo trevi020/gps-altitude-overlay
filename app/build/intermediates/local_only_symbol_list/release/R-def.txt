@@ -11,8 +11,10 @@ color white
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable info_background
+id btn_save_correction
 id btn_start
 id btn_stop
+id edit_geoid_correction
 layout activity_main
 mipmap ic_launcher
 mipmap ic_launcher_round

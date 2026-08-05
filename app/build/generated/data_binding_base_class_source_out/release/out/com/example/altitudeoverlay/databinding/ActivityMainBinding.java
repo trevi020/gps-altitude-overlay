@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,16 +21,24 @@ public final class ActivityMainBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final Button btnSaveCorrection;
+
+  @NonNull
   public final Button btnStart;
 
   @NonNull
   public final Button btnStop;
 
-  private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull Button btnStart,
-      @NonNull Button btnStop) {
+  @NonNull
+  public final EditText editGeoidCorrection;
+
+  private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull Button btnSaveCorrection,
+      @NonNull Button btnStart, @NonNull Button btnStop, @NonNull EditText editGeoidCorrection) {
     this.rootView = rootView;
+    this.btnSaveCorrection = btnSaveCorrection;
     this.btnStart = btnStart;
     this.btnStop = btnStop;
+    this.editGeoidCorrection = editGeoidCorrection;
   }
 
   @Override
@@ -59,6 +68,12 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btn_save_correction;
+      Button btnSaveCorrection = ViewBindings.findChildViewById(rootView, id);
+      if (btnSaveCorrection == null) {
+        break missingId;
+      }
+
       id = R.id.btn_start;
       Button btnStart = ViewBindings.findChildViewById(rootView, id);
       if (btnStart == null) {
@@ -71,7 +86,14 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((LinearLayout) rootView, btnStart, btnStop);
+      id = R.id.edit_geoid_correction;
+      EditText editGeoidCorrection = ViewBindings.findChildViewById(rootView, id);
+      if (editGeoidCorrection == null) {
+        break missingId;
+      }
+
+      return new ActivityMainBinding((LinearLayout) rootView, btnSaveCorrection, btnStart, btnStop,
+          editGeoidCorrection);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
