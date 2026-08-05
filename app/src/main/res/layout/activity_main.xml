@@ -23,6 +23,47 @@
         android:gravity="center"
         android:layout_marginBottom="32dp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/info_background">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🌍 Correzione geoide (livello del mare)"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Il GPS mostra l'altitudine grezza WGS84, non quella sul livello del mare. Inserisci il valore di correzione per la tua zona (in Italia è circa 47)."
+            android:textSize="12sp"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/edit_geoid_correction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal|numberSigned"
+            android:hint="Es. 47.0 (Italia) oppure -60 (India)"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btn_save_correction"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Salva correzione"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/btn_start"
         android:layout_width="match_parent"
