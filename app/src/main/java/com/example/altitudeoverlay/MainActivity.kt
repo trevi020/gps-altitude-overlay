@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,6 +18,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var startButton: Button
     private lateinit var stopButton: Button
+    private lateinit var saveCorrectionButton: Button
+    private lateinit var geoidCorrectionField: EditText
     private val PERMISSION_REQUEST_CODE = 100
     private val OVERLAY_PERMISSION_REQUEST_CODE = 101
 
@@ -26,6 +29,11 @@ class MainActivity : AppCompatActivity() {
 
         startButton = findViewById(R.id.btn_start)
         stopButton = findViewById(R.id.btn_stop)
+        saveCorrectionButton = findViewById(R.id.btn_save_correction)
+        geoidCorrectionField = findViewById(R.id.edit_geoid_correction)
+
+        val currentValue = GeoidCorrection.getUndulation(this)
+        geoidCorrectionField.setText(currentValue.toString())
 
         startButton.setOnClickListener {
             checkPermissionsAndStart()
@@ -35,7 +43,36 @@ class MainActivity : AppCompatActivity() {
             stopOverlay()
         }
 
+        saveCorrectionButton.setOnClickListener {
+            saveGeoidCorrection()
+        }
+
         stopButton.isEnabled = false
+    }
+
+    private fun saveGeoidCorrection() {
+        val inputText = geoidCorrectionField.text.toString().trim()
+        val value = inputText.toDoubleOrNull()
+
+        if (value == null) {
+            Toast.makeText(
+                this,
+                "Inserisci un numero valido (es. 47 oppure -60)",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        GeoidCorrection.setUndulation(this, value)
+        Toast.makeText(
+            this,
+            "Correzione salvata: ${value}m. Riavvia l'overlay per applicarla.",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun checkPermissionsAndStart() {
