@@ -1,0 +1,18 @@
+[33mcommit b4313e983e5989794ba0c29ac4a43099fce0e9d2[m
+Author: trevi020 <119977992+trevi020@users.noreply.github.com>
+Date:   Thu Aug 13 18:29:12 2026 +0000
+
+    Remove compromised keystore (altitude-overlay.keystore)
+
+[33mcommit 819f5bb071181702369ba3400d97628523620479[m
+Merge: 509bc06 ae3ffe8
+Author: trevi020 <119977992+trevi020@users.noreply.github.com>
+Date:   Tue Aug 4 11:07:22 2026 +0000
+
+    Merge branch 'main' of https://github.com/trevi020/gps-altitude-overlay
+
+[33mcommit 509bc06d0453fd8e1c3dc059b64aca42f68560a2[m[33m ([m[1;33mtag: [m[1;33mv0.1[m[33m)[m
+Author: trevi020 <119977992+trevi020@users.noreply.github.com>
+Date:   Tue Aug 4 11:03:04 2026 +0000
+
+    Release v0.1
