@@ -31,5 +31,8 @@ L'ultima versione è sempre disponibile nella pagina delle [Release](../../relea
 
 Prerequisiti: JDK 17, Android SDK (API 34), Gradle 8.5 (gestito automaticamente dal wrapper incluso).
 
-\`\`\`bash
-git clone
+```bash
+git clone https://github.com/trevi020/gps-altitude-overlay.git
+cd gps-altitude-overlay
+./gradlew assembleRelease --no-daemon
+```
