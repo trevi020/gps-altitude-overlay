@@ -15,3 +15,6 @@ altitude-overlay.keystore
 new-altitude-overlay.keystore
 *.keystore
 *.jks
+*.keystore
+*.jks
+keystore.properties
