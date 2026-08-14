@@ -18,3 +18,5 @@ new-altitude-overlay.keystore
 *.keystore
 *.jks
 keystore.properties
+app/build/
+**/build/
