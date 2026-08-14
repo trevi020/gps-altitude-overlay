@@ -12,7 +12,5 @@
         <item name="colorOnBackground">@color/trail_text_primary</item>
         <item name="colorOnSurface">@color/trail_text_primary</item>
         <item name="android:windowBackground">@color/trail_background</item>
-        <item name="android:fontFamily">@font/manrope_medium</item>
-        <item name="fontFamily">@font/manrope_medium</item>
     </style>
 </resources>

@@ -17,9 +17,10 @@
             android:layout_height="wrap_content"
             android:text="Overlay Altitudine"
             android:textSize="24sp"
-                        android:fontFamily="@font/manrope_extrabold"
+            android:fontFamily="@font/manrope_bold"
             android:textColor="@color/trail_text_primary"
             android:layout_marginBottom="6dp" />
+
 
         <!-- Sottotitolo -->
         <TextView
@@ -29,7 +30,8 @@
             android:textSize="13sp"
             android:textColor="@color/trail_text_secondary"
             android:lineSpacingMultiplier="1.5"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/manrope_medium" />
 
         <!-- Card altitudine grezza / corretta -->
         <LinearLayout
@@ -56,7 +58,8 @@
                     android:textStyle="bold"
                     android:textColor="@color/trail_text_hint"
                     android:letterSpacing="0.05"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="@font/manrope_medium" />
 
                 <TextView
                     android:id="@+id/text_raw_altitude"
@@ -64,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:text="--m"
                     android:textSize="28sp"
-                                        android:fontFamily="@font/manrope_extrabold"
+                    android:fontFamily="@font/manrope_bold"
                     android:textColor="@color/trail_text_hint" />
 
             </LinearLayout>
@@ -93,7 +96,8 @@
                     android:textStyle="bold"
                     android:textColor="@color/trail_green"
                     android:letterSpacing="0.05"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="@font/manrope_medium" />
 
                 <TextView
                     android:id="@+id/text_corrected_altitude"
@@ -101,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:text="--m"
                     android:textSize="28sp"
-                                        android:fontFamily="@font/manrope_extrabold"
+                    android:fontFamily="@font/manrope_bold"
                     android:textColor="@color/trail_text_primary" />
 
             </LinearLayout>
@@ -132,7 +136,8 @@
                 android:textStyle="bold"
                 android:textColor="@color/trail_text_secondary"
                 android:letterSpacing="0.05"
-                android:gravity="center_vertical" />
+                android:gravity="center_vertical"
+                android:fontFamily="@font/manrope_medium" />
 
             <TextView
                 android:id="@+id/text_correction_value"
@@ -140,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:text="0.0m"
                 android:textSize="20sp"
-                android:fontFamily="@font/manrope_extrabold"
+                android:fontFamily="@font/manrope_bold"
                 android:textColor="@color/trail_orange" />
 
         </LinearLayout>
@@ -163,7 +168,8 @@
             android:textSize="11sp"
             android:textColor="@color/trail_text_hint"
             android:lineSpacingMultiplier="1.4"
-            android:layout_marginBottom="14dp" />
+            android:layout_marginBottom="14dp"
+            android:fontFamily="@font/manrope_medium" />
 
         <!-- Pulsanti preset -->
         <LinearLayout
@@ -185,7 +191,8 @@
                 android:textColor="@color/trail_orange"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:stateListAnimator="@null" />
+                android:stateListAnimator="@null"
+                android:fontFamily="@font/manrope_medium" />
 
             <Button
                 android:id="@+id/btn_preset_uk"
@@ -200,7 +207,8 @@
                 android:textColor="@color/trail_text_secondary"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:stateListAnimator="@null" />
+                android:stateListAnimator="@null"
+                android:fontFamily="@font/manrope_medium" />
 
             <Button
                 android:id="@+id/btn_preset_custom"
@@ -214,7 +222,8 @@
                 android:textColor="@color/trail_text_secondary"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:stateListAnimator="@null" />
+                android:stateListAnimator="@null"
+                android:fontFamily="@font/manrope_medium" />
 
         </LinearLayout>
 
@@ -239,14 +248,16 @@
                 android:layout_weight="1"
                 android:text="Mostra accuratezza GPS"
                 android:textSize="14sp"
-                android:textColor="@color/trail_text_primary" />
+                android:textColor="@color/trail_text_primary"
+                android:fontFamily="@font/manrope_medium" />
 
             <Switch
                 android:id="@+id/switch_show_accuracy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:thumbTint="@color/trail_green"
-                android:trackTint="@color/trail_border" />
+                android:trackTint="@color/trail_border"
+                android:fontFamily="@font/manrope_medium" />
 
         </LinearLayout>
 
@@ -269,7 +280,8 @@
                 android:text="• Resta visibile sopra ogni app\n• GPS attivo anche in background\n• Doppio tap sull'overlay per cambiare dimensione\n• Trascina l'overlay in basso per chiuderlo"
                 android:textSize="12sp"
                 android:textColor="@color/trail_text_secondary"
-                android:lineSpacingMultiplier="1.7" />
+                android:lineSpacingMultiplier="1.7"
+                android:fontFamily="@font/manrope_medium" />
 
         </LinearLayout>
 
@@ -290,7 +302,8 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/bg_pill_button"
             android:elevation="8dp"
-            android:stateListAnimator="@null" />
+            android:stateListAnimator="@null"
+            android:fontFamily="@font/manrope_medium" />
 
     </LinearLayout>
 

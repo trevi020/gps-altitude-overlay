@@ -21,8 +21,8 @@ android {
         applicationId = "com.example.altitudeoverlay"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.4"
+        versionCode = 6
+        versionName = "0.5.1"
     }
 
     signingConfigs {
