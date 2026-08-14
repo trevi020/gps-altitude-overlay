@@ -1,115 +1,291 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Overlay Altitudine GPS"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="32dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Questo overlay mostra l'altitudine rilevata dal GPS in tempo reale. Puoi usarlo mentre navighi con Google Maps o altre app."
-        android:textSize="16sp"
-        android:gravity="center"
-        android:layout_marginBottom="32dp" />
+    android:background="@color/trail_background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/info_background">
+        android:padding="24dp">
 
+        <!-- Titolo -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🌍 Correzione geoide (livello del mare)"
-            android:textSize="15sp"
+            android:text="Overlay Altitudine"
+            android:textSize="24sp"
             android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/trail_text_primary"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Sottotitolo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mostra l'altitudine GPS in overlay sopra qualsiasi app, ideale in navigazione."
+            android:textSize="13sp"
+            android:textColor="@color/trail_text_secondary"
+            android:lineSpacingMultiplier="1.5"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Card altitudine grezza / corretta -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card_white"
+            android:padding="18dp"
+            android:layout_marginBottom="16dp">
+
+            <!-- Grezza -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GREZZA (WGS84)"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/trail_text_hint"
+                    android:letterSpacing="0.05"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/text_raw_altitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--m"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-black"
+                    android:textColor="@color/trail_text_hint" />
+
+            </LinearLayout>
+
+            <!-- Divider verticale -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/trail_border"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp" />
+
+            <!-- Corretta -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CORRETTA"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/trail_green"
+                    android:letterSpacing="0.05"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/text_corrected_altitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--m"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-black"
+                    android:textColor="@color/trail_text_primary" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Linea decorativa ondulata -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_wavy_line"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@null" />
+
+        <!-- Sezione correzione geoide -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CORREZIONE GEOIDE"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/trail_text_secondary"
+            android:letterSpacing="0.05"
             android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/text_correction_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0m"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/trail_orange"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Slider: range -100..+100, implementato come SeekBar 0..200 con offset -->
+        <SeekBar
+            android:id="@+id/seekbar_correction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="200"
+            android:progress="100"
+            android:progressTint="@color/trail_green"
+            android:thumbTint="@color/trail_green"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Il GPS mostra l'altitudine grezza WGS84, non quella sul livello del mare. Inserisci il valore di correzione per la tua zona (in Italia è circa 47)."
-            android:textSize="12sp"
-            android:layout_marginBottom="12dp" />
+            android:textSize="11sp"
+            android:textColor="@color/trail_text_hint"
+            android:lineSpacingMultiplier="1.4"
+            android:layout_marginBottom="14dp" />
 
-        <EditText
-            android:id="@+id/edit_geoid_correction"
+        <!-- Pulsanti preset -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal|numberSigned"
-            android:hint="Es. 47.0 (Italia) oppure -60 (India)"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
+            <Button
+                android:id="@+id/btn_preset_italia"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Italia (47)"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:background="@drawable/bg_preset_selected"
+                android:textColor="@color/trail_orange"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:stateListAnimator="@null" />
+
+            <Button
+                android:id="@+id/btn_preset_uk"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="UK (55)"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:background="@drawable/bg_preset_unselected"
+                android:textColor="@color/trail_text_secondary"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:stateListAnimator="@null" />
+
+            <Button
+                android:id="@+id/btn_preset_custom"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="Custom"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:background="@drawable/bg_preset_unselected"
+                android:textColor="@color/trail_text_secondary"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:stateListAnimator="@null" />
+
+        </LinearLayout>
+
+        <!-- Riga checkbox / switch accuratezza -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/trail_border"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mostra accuratezza GPS"
+                android:textSize="14sp"
+                android:textColor="@color/trail_text_primary" />
+
+            <Switch
+                android:id="@+id/switch_show_accuracy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:thumbTint="@color/trail_green"
+                android:trackTint="@color/trail_border" />
+
+        </LinearLayout>
+
+        <!-- Blocco info -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/trail_border" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Resta visibile sopra ogni app\n• GPS attivo anche in background\n• Doppio tap sull'overlay per cambiare dimensione\n• Trascina l'overlay in basso per chiuderlo"
+                android:textSize="12sp"
+                android:textColor="@color/trail_text_secondary"
+                android:lineSpacingMultiplier="1.7" />
+
+        </LinearLayout>
+
+        <!-- Spazio prima del pulsante primario -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <!-- Pulsante primario (avvia/ferma) -->
         <Button
-            android:id="@+id/btn_save_correction"
+            android:id="@+id/btn_start"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Salva correzione"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/checkbox_show_accuracy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Mostra accuratezza GPS (±m) accanto all'altitudine"
-        android:textSize="14sp"
-        android:layout_marginBottom="24dp" />
-
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Avvia Overlay"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp" />
-
-    <Button
-        android:id="@+id/btn_stop"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Ferma Overlay"
-        android:textSize="18sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="32dp"
-        android:padding="16dp"
-        android:background="@drawable/info_background">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ℹ️ Informazioni"
+            android:layout_height="58dp"
+            android:text="Avvia Overlay"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="• L'overlay rimarrà sempre visibile\n• GPS attivo anche in background\n• L'accuratezza dipende dalla ricezione GPS\n• Usa il modo 'Alta Accuratezza' per migliori risultati"
-            android:textSize="14sp"
-            android:lineSpacingMultiplier="1.5" />
+            android:textStyle="normal"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_pill_button"
+            android:elevation="8dp"
+            android:stateListAnimator="@null" />
 
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="trail_background">#F6F2E9</color>
+    <color name="trail_text_primary">#22301F</color>
+    <color name="trail_text_secondary">#5C6B53</color>
+    <color name="trail_text_hint">#8A9280</color>
+    <color name="trail_border">#DDD4C0</color>
+    <color name="trail_green">#5C8A3F</color>
+    <color name="trail_orange">#E8622C</color>
+    <color name="trail_orange_bg">#FFF3EC</color>
+    <color name="trail_card_white">#FFFFFF</color>
+</resources>
