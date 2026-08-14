@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
@@ -30,14 +31,19 @@ public final class ActivityMainBinding implements ViewBinding {
   public final Button btnStop;
 
   @NonNull
+  public final CheckBox checkboxShowAccuracy;
+
+  @NonNull
   public final EditText editGeoidCorrection;
 
   private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull Button btnSaveCorrection,
-      @NonNull Button btnStart, @NonNull Button btnStop, @NonNull EditText editGeoidCorrection) {
+      @NonNull Button btnStart, @NonNull Button btnStop, @NonNull CheckBox checkboxShowAccuracy,
+      @NonNull EditText editGeoidCorrection) {
     this.rootView = rootView;
     this.btnSaveCorrection = btnSaveCorrection;
     this.btnStart = btnStart;
     this.btnStop = btnStop;
+    this.checkboxShowAccuracy = checkboxShowAccuracy;
     this.editGeoidCorrection = editGeoidCorrection;
   }
 
@@ -86,6 +92,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.checkbox_show_accuracy;
+      CheckBox checkboxShowAccuracy = ViewBindings.findChildViewById(rootView, id);
+      if (checkboxShowAccuracy == null) {
+        break missingId;
+      }
+
       id = R.id.edit_geoid_correction;
       EditText editGeoidCorrection = ViewBindings.findChildViewById(rootView, id);
       if (editGeoidCorrection == null) {
@@ -93,7 +105,7 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((LinearLayout) rootView, btnSaveCorrection, btnStart, btnStop,
-          editGeoidCorrection);
+          checkboxShowAccuracy, editGeoidCorrection);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

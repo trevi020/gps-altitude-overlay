@@ -7,6 +7,7 @@ object GeoidCorrection {
 
     private const val PREFS_NAME = "overlay_prefs"
     private const val KEY_GEOID_UNDULATION = "geoid_undulation_n"
+    private const val KEY_SHOW_ACCURACY = "show_accuracy"
 
     const val DEFAULT_ITALIA = 47.0
 
@@ -17,6 +18,14 @@ object GeoidCorrection {
 
     fun setUndulation(context: Context, value: Double) {
         getPrefs(context).edit().putFloat(KEY_GEOID_UNDULATION, value.toFloat()).apply()
+    }
+
+    fun getShowAccuracy(context: Context): Boolean {
+        return getPrefs(context).getBoolean(KEY_SHOW_ACCURACY, true)
+    }
+
+    fun setShowAccuracy(context: Context, value: Boolean) {
+        getPrefs(context).edit().putBoolean(KEY_SHOW_ACCURACY, value).apply()
     }
 
     private fun getPrefs(context: Context): SharedPreferences {

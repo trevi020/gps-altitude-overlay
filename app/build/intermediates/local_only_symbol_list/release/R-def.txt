@@ -14,6 +14,7 @@ drawable info_background
 id btn_save_correction
 id btn_start
 id btn_stop
+id checkbox_show_accuracy
 id edit_geoid_correction
 layout activity_main
 mipmap ic_launcher

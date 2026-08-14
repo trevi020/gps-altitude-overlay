@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var stopButton: Button
     private lateinit var saveCorrectionButton: Button
     private lateinit var geoidCorrectionField: EditText
+    private lateinit var showAccuracyCheckbox: CheckBox
     private val PERMISSION_REQUEST_CODE = 100
     private val OVERLAY_PERMISSION_REQUEST_CODE = 101
 
@@ -31,9 +33,12 @@ class MainActivity : AppCompatActivity() {
         stopButton = findViewById(R.id.btn_stop)
         saveCorrectionButton = findViewById(R.id.btn_save_correction)
         geoidCorrectionField = findViewById(R.id.edit_geoid_correction)
+        showAccuracyCheckbox = findViewById(R.id.checkbox_show_accuracy)
 
         val currentValue = GeoidCorrection.getUndulation(this)
         geoidCorrectionField.setText(currentValue.toString())
+
+        showAccuracyCheckbox.isChecked = GeoidCorrection.getShowAccuracy(this)
 
         startButton.setOnClickListener {
             checkPermissionsAndStart()
@@ -45,6 +50,10 @@ class MainActivity : AppCompatActivity() {
 
         saveCorrectionButton.setOnClickListener {
             saveGeoidCorrection()
+        }
+
+        showAccuracyCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            GeoidCorrection.setShowAccuracy(this, isChecked)
         }
 
         stopButton.isEnabled = false
@@ -120,9 +129,11 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             permissions.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
         }
+
         ActivityCompat.requestPermissions(
             this,
             permissions.toTypedArray(),
@@ -136,7 +147,11 @@ class MainActivity : AppCompatActivity() {
             if (hasOverlayPermission()) {
                 checkPermissionsAndStart()
             } else {
-                Toast.makeText(this, "Permesso overlay non concesso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Permesso overlay non concesso",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -151,7 +166,11 @@ class MainActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 startOverlay()
             } else {
-                Toast.makeText(this, "Permesso localizzazione necessario", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Permesso localizzazione necessario per il funzionamento dell'app",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -163,6 +182,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             startService(intent)
         }
+
         startButton.isEnabled = false
         stopButton.isEnabled = true
         Toast.makeText(this, "Overlay avviato", Toast.LENGTH_SHORT).show()
@@ -171,6 +191,7 @@ class MainActivity : AppCompatActivity() {
     private fun stopOverlay() {
         val intent = Intent(this, LocationOverlayService::class.java)
         stopService(intent)
+
         startButton.isEnabled = true
         stopButton.isEnabled = false
         Toast.makeText(this, "Overlay fermato", Toast.LENGTH_SHORT).show()

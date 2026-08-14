@@ -35,15 +35,20 @@ class LocationOverlayService : Service() {
     private lateinit var gestureDetector: GestureDetector
     private lateinit var prefs: SharedPreferences
     private var isOverlayShowing = false
+    private var lastLocation: Location? = null
 
-    // Stato per il trascinamento
     private var initialX = 0
     private var initialY = 0
     private var initialTouchX = 0f
     private var initialTouchY = 0f
     private var isDragging = false
+    private var isInDismissZone = false
 
-    // Dimensioni disponibili per l'overlay (ciclo: PICCOLA -> MEDIA -> GRANDE -> PICCOLA ...)
+    private var dismissZoneTopY = 0
+
+    private val COLOR_NORMAL = 0x99000000.toInt()
+    private val COLOR_DISMISS = 0xCCD32F2F.toInt()
+
     private enum class OverlaySize(val textSizeSp: Float, val paddingPx: Int) {
         PICCOLA(16f, 24),
         MEDIA(24f, 32),
@@ -63,13 +68,15 @@ class LocationOverlayService : Service() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        // Ripristina l'ultima dimensione scelta (default: PICCOLA)
         val savedSizeName = prefs.getString(KEY_SIZE, OverlaySize.PICCOLA.name)
         currentSize = try {
             OverlaySize.valueOf(savedSizeName ?: OverlaySize.PICCOLA.name)
         } catch (e: IllegalArgumentException) {
             OverlaySize.PICCOLA
         }
+
+        val screenHeight = resources.displayMetrics.heightPixels
+        dismissZoneTopY = (screenHeight * 0.88).toInt()
 
         setupOverlay()
         startLocationUpdates()
@@ -80,7 +87,7 @@ class LocationOverlayService : Service() {
         overlayView = TextView(this).apply {
             text = "Altitudine: --"
             setTextColor(0xFFFFFFFF.toInt())
-            setBackgroundColor(0x99000000.toInt())
+            setBackgroundColor(COLOR_NORMAL)
             gravity = Gravity.CENTER
         }
         applySizeToView()
@@ -93,7 +100,6 @@ class LocationOverlayService : Service() {
                 WindowManager.LayoutParams.TYPE_PHONE
             }
             format = PixelFormat.TRANSLUCENT
-            // NOTA: niente FLAG_NOT_TOUCHABLE, altrimenti non si può trascinare/toccare
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
@@ -104,7 +110,6 @@ class LocationOverlayService : Service() {
             y = 150
         }
 
-        // GestureDetector per riconoscere il doppio tap senza interferire col drag
         gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDoubleTap(e: MotionEvent): Boolean {
                 cycleOverlaySize()
@@ -112,9 +117,7 @@ class LocationOverlayService : Service() {
             }
         })
 
-        // Listener combinato: doppio tap per cambiare dimensione, drag per spostare
         overlayView.setOnTouchListener { _, event ->
-            // Passa sempre l'evento al gesture detector per intercettare il doppio tap
             gestureDetector.onTouchEvent(event)
 
             when (event.action) {
@@ -130,7 +133,6 @@ class LocationOverlayService : Service() {
                     val dx = event.rawX - initialTouchX
                     val dy = event.rawY - initialTouchY
 
-                    // Considera "trascinamento" solo oltre una piccola soglia
                     if (abs(dx) > 8 || abs(dy) > 8) {
                         isDragging = true
                     }
@@ -139,11 +141,23 @@ class LocationOverlayService : Service() {
                         overlayParams.x = initialX + dx.toInt()
                         overlayParams.y = initialY + dy.toInt()
                         windowManager.updateViewLayout(overlayView, overlayParams)
+
+                        val nowInDismissZone = overlayParams.y >= dismissZoneTopY
+                        if (nowInDismissZone != isInDismissZone) {
+                            isInDismissZone = nowInDismissZone
+                            overlayView.setBackgroundColor(
+                                if (isInDismissZone) COLOR_DISMISS else COLOR_NORMAL
+                            )
+                        }
                     }
                     true
                 }
                 MotionEvent.ACTION_UP -> {
+                    if (isDragging && isInDismissZone) {
+                        stopSelf()
+                    }
                     isDragging = false
+                    isInDismissZone = false
                     true
                 }
                 else -> false
@@ -154,43 +168,32 @@ class LocationOverlayService : Service() {
         isOverlayShowing = true
     }
 
-    /**
-     * Applica la dimensione corrente (testo + padding) alla view dell'overlay.
-     */
     private fun applySizeToView() {
         overlayView.textSize = currentSize.textSizeSp
         val p = currentSize.paddingPx
         overlayView.setPadding(p, (p * 0.8).toInt(), p, (p * 0.8).toInt())
     }
 
-    /**
-     * Passa alla dimensione successiva nel ciclo PICCOLA -> MEDIA -> GRANDE -> PICCOLA.
-     * Poiché width/height dell'overlay sono WRAP_CONTENT, basta aggiornare la view
-     * e poi ri-applicare il layout: Android ricalcola automaticamente le dimensioni.
-     */
     private fun cycleOverlaySize() {
         val values = OverlaySize.entries.toTypedArray()
         val nextIndex = (currentSize.ordinal + 1) % values.size
         currentSize = values[nextIndex]
 
         applySizeToView()
-
-        // Forza il ricalcolo del layout (WRAP_CONTENT) mantenendo la posizione x/y attuale
         windowManager.updateViewLayout(overlayView, overlayParams)
-
-        // Salva la preferenza per la prossima apertura
         prefs.edit().putString(KEY_SIZE, currentSize.name).apply()
     }
 
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            1000 // Aggiornamento ogni 1 secondo
+            1000
         ).build()
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val location = locationResult.lastLocation ?: return
+                lastLocation = location
                 updateOverlay(location)
             }
         }
@@ -208,13 +211,18 @@ class LocationOverlayService : Service() {
     }
 
     private fun updateOverlay(location: Location) {
-    val altitudeGrezza = location.altitude
-    val undulation = GeoidCorrection.getUndulation(this)
-    val altitudeCorretta = GeoidCorrection.toOrthometricAltitude(altitudeGrezza, undulation).toInt()
-    val accuracy = location.accuracy.toInt()
-    val text = "⛰ ${altitudeCorretta}m (±${accuracy}m)"
-    overlayView.text = text
-}
+        val altitudeGrezza = location.altitude
+        val undulation = GeoidCorrection.getUndulation(this)
+        val altitudeCorretta = GeoidCorrection.toOrthometricAltitude(altitudeGrezza, undulation).toInt()
+
+        val text = if (GeoidCorrection.getShowAccuracy(this)) {
+            val accuracy = location.accuracy.toInt()
+            "⛰ ${altitudeCorretta}m (±${accuracy}m)"
+        } else {
+            "⛰ ${altitudeCorretta}m"
+        }
+        overlayView.text = text
+    }
 
     private fun createNotification() {
         val channelId = "altitude_overlay_channel"
@@ -231,7 +239,7 @@ class LocationOverlayService : Service() {
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle("Overlay Altitudine Attivo")
-            .setContentText("Monitoraggio posizione in corso... (doppio tap per cambiare dimensione)")
+            .setContentText("Doppio tap: ridimensiona. Trascina in basso: chiudi.")
             .setSmallIcon(android.R.drawable.ic_menu_mylocation)
             .build()
 
@@ -248,6 +256,7 @@ class LocationOverlayService : Service() {
 
         if (isOverlayShowing) {
             windowManager.removeView(overlayView)
+            isOverlayShowing = false
         }
     }
 
