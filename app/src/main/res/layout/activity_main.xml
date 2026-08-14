@@ -17,8 +17,7 @@
             android:layout_height="wrap_content"
             android:text="Overlay Altitudine"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/manrope"
+                        android:fontFamily="@font/manrope_extrabold"
             android:textColor="@color/trail_text_primary"
             android:layout_marginBottom="6dp" />
 
@@ -46,7 +45,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -64,8 +64,7 @@
                     android:layout_height="wrap_content"
                     android:text="--m"
                     android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/manrope"
+                                        android:fontFamily="@font/manrope_extrabold"
                     android:textColor="@color/trail_text_hint" />
 
             </LinearLayout>
@@ -83,7 +82,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -101,8 +101,7 @@
                     android:layout_height="wrap_content"
                     android:text="--m"
                     android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/manrope"
+                                        android:fontFamily="@font/manrope_extrabold"
                     android:textColor="@color/trail_text_primary" />
 
             </LinearLayout>
@@ -117,27 +116,34 @@
             android:layout_marginBottom="20dp"
             android:contentDescription="@null" />
 
-        <!-- Sezione correzione geoide -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Sezione correzione geoide: label a sinistra, valore a destra sulla stessa riga -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CORREZIONE GEOIDE"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:textColor="@color/trail_text_secondary"
-            android:letterSpacing="0.05"
-            android:layout_marginBottom="4dp" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
-        <TextView
-            android:id="@+id/text_correction_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0.0m"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/manrope"
-            android:textColor="@color/trail_orange"
-            android:layout_marginBottom="8dp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CORREZIONE GEOIDE"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/trail_text_secondary"
+                android:letterSpacing="0.05"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/text_correction_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0m"
+                android:textSize="20sp"
+                android:fontFamily="@font/manrope_extrabold"
+                android:textColor="@color/trail_orange" />
+
+        </LinearLayout>
 
         <!-- Slider: range -100..+100, implementato come SeekBar 0..200 con offset -->
         <SeekBar

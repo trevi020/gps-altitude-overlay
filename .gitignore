@@ -20,3 +20,5 @@ new-altitude-overlay.keystore
 keystore.properties
 app/build/
 **/build/
+app/build/
+**/build/
