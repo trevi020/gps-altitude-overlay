@@ -1,6 +1,6 @@
 # 🧭 Overlay Altitudine GPS
 
-![Version](https://img.shields.io/badge/version-0.4-blue)
+![Version](https://img.shields.io/badge/version-0.5.1-blue)
 ![Platform](https://img.shields.io/badge/platform-Android%205.0%2B-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
