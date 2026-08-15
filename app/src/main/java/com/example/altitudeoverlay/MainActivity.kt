@@ -1,13 +1,19 @@
 package com.example.altitudeoverlay
 
 import android.Manifest
+import android.animation.ValueAnimator
+import android.app.ActivityManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.MotionEvent
+import android.view.animation.LinearInterpolator
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
@@ -29,7 +35,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnPresetUk: Button
     private lateinit var btnPresetCustom: Button
 
-    private var isOverlayRunning = false
+    // --- Stato animazione onda ---
+    // La fase va da 0 a 1: rappresenta quanto la view è traslata rispetto a metà
+    // della sua larghezza. Avanza a ogni frame di una quantità proporzionale al
+    // tempo trascorso, moltiplicata per waveSpeedFactor.
+    private var waveTicker: ValueAnimator? = null
+    private var waveSpeedAnimator: ValueAnimator? = null
+    private var wavePhase = 0f
+    private var waveSpeedFactor = 1f  // 1 = velocità piena, 0 = ferma
+    private var lastFrameTimeNs = 0L
+
+    private val WAVE_CYCLE_MS = 5000f       // durata di un ciclo completo a velocità piena
+    private val WAVE_SPEED_RAMP_MS = 2000L  // tempo per fermarsi / ripartire gradualmente
 
     private val PERMISSION_REQUEST_CODE = 100
     private val OVERLAY_PERMISSION_REQUEST_CODE = 101
@@ -85,8 +102,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnPresetCustom.setOnClickListener {
-            // "Custom" non applica un valore fisso: invita l'utente a usare lo slider
-            Toast.makeText(this, "Usa lo slider per impostare un valore personalizzato", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Usa lo slider per impostare un valore personalizzato",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         switchShowAccuracy.setOnCheckedChangeListener { _, isChecked ->
@@ -94,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         startButton.setOnClickListener {
-            if (isOverlayRunning) {
+            if (isOverlayServiceRunning()) {
                 stopOverlay()
             } else {
                 checkPermissionsAndStart()
@@ -107,6 +127,112 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refreshAltitudeCard()
+        startWaveAnimation()
+        syncOverlayButtonState()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Ferma tutto in background per non consumare batteria
+        waveTicker?.cancel()
+        waveTicker = null
+        waveSpeedAnimator?.cancel()
+        waveSpeedAnimator = null
+    }
+
+    /**
+     * Verifica se il servizio overlay è effettivamente in esecuzione, interrogando
+     * il sistema invece di affidarsi a uno stato locale. Necessario perché il
+     * servizio può fermarsi da solo (es. trascinando l'overlay nel cestino) senza
+     * che l'Activity ne venga informata.
+     */
+    private fun isOverlayServiceRunning(): Boolean {
+        val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        @Suppress("DEPRECATION")
+        return manager.getRunningServices(Integer.MAX_VALUE)
+            .any { it.service.className == LocationOverlayService::class.java.name }
+    }
+
+    /**
+     * Allinea il testo del pulsante allo stato reale del servizio.
+     */
+    private fun syncOverlayButtonState() {
+        startButton.text = if (isOverlayServiceRunning()) "Ferma Overlay" else "Avvia Overlay"
+    }
+
+    /**
+     * Avvia lo scorrimento infinito dell'onda decorativa.
+     *
+     * L'immagine è larga il doppio dello schermo e contiene due ripetizioni identiche
+     * del pattern: traslando esattamente di metà larghezza il punto di ripartenza
+     * coincide e il loop risulta invisibile.
+     *
+     * Invece di un ObjectAnimator a durata fissa (che non permetterebbe di variare
+     * la velocità in corsa), si usa un "ticker" che a ogni frame avanza la fase in
+     * base al tempo realmente trascorso, moltiplicato per waveSpeedFactor.
+     */
+    private fun startWaveAnimation() {
+        val waveImage = findViewById<ImageView>(R.id.wave_image) ?: return
+        val waveContainer = findViewById<FrameLayout>(R.id.wave_container)
+
+        waveImage.post {
+            val screenWidth = resources.displayMetrics.widthPixels
+
+            // L'immagine deve essere larga il doppio dello schermo: una metà copre
+            // sempre l'area visibile mentre l'altra "entra" progressivamente da destra
+            waveImage.layoutParams.width = screenWidth * 2
+            waveImage.requestLayout()
+
+            waveTicker?.cancel()
+            lastFrameTimeNs = System.nanoTime()
+
+            waveTicker = ValueAnimator.ofFloat(0f, 1f).apply {
+                duration = 1000
+                repeatCount = ValueAnimator.INFINITE
+                interpolator = LinearInterpolator()
+                addUpdateListener {
+                    val now = System.nanoTime()
+                    val deltaMs = (now - lastFrameTimeNs) / 1_000_000f
+                    lastFrameTimeNs = now
+
+                    // Avanza la fase in proporzione al tempo trascorso e alla velocità corrente
+                    wavePhase = (wavePhase + (deltaMs / WAVE_CYCLE_MS) * waveSpeedFactor) % 1f
+                    waveImage.translationX = -wavePhase * screenWidth
+                }
+                start()
+            }
+
+            // Easter egg: tenendo premuto sull'onda, questa rallenta fino a fermarsi;
+            // al rilascio riprende gradualmente la velocità originale.
+            waveContainer?.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        animateWaveSpeedTo(0f)
+                        true
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        v.performClick()
+                        animateWaveSpeedTo(1f)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
+    }
+
+    /**
+     * Porta gradualmente il fattore di velocità dell'onda al valore desiderato
+     * (0 = ferma, 1 = velocità piena), con una rampa dolce.
+     */
+    private fun animateWaveSpeedTo(target: Float) {
+        waveSpeedAnimator?.cancel()
+        waveSpeedAnimator = ValueAnimator.ofFloat(waveSpeedFactor, target).apply {
+            duration = WAVE_SPEED_RAMP_MS
+            interpolator = LinearInterpolator()
+            addUpdateListener { waveSpeedFactor = it.animatedValue as Float }
+            start()
+        }
     }
 
     /**
@@ -130,39 +256,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Evidenzia il preset corrispondente al valore corrente (se combacia con uno dei due fissi),
-     * altrimenti evidenzia "Custom".
+     * Evidenzia il preset corrispondente al valore corrente; se non combacia con
+     * nessuno dei due fissi, evidenzia "Custom".
      */
     private fun updatePresetSelection(value: Double) {
         val isItalia = value == GeoidCorrection.DEFAULT_ITALIA
         val isUk = value == 55.0
-
-        btnPresetItalia.setBackgroundResource(
-            if (isItalia) R.drawable.bg_preset_selected else R.drawable.bg_preset_unselected
-        )
-        btnPresetItalia.setTextColor(
-            ContextCompat.getColor(this, if (isItalia) R.color.trail_orange else R.color.trail_text_secondary)
-        )
-
-        btnPresetUk.setBackgroundResource(
-            if (isUk) R.drawable.bg_preset_selected else R.drawable.bg_preset_unselected
-        )
-        btnPresetUk.setTextColor(
-            ContextCompat.getColor(this, if (isUk) R.color.trail_orange else R.color.trail_text_secondary)
-        )
-
         val isCustom = !isItalia && !isUk
-        btnPresetCustom.setBackgroundResource(
-            if (isCustom) R.drawable.bg_preset_selected else R.drawable.bg_preset_unselected
+
+        applyPresetStyle(btnPresetItalia, isItalia)
+        applyPresetStyle(btnPresetUk, isUk)
+        applyPresetStyle(btnPresetCustom, isCustom)
+    }
+
+    private fun applyPresetStyle(button: Button, selected: Boolean) {
+        button.setBackgroundResource(
+            if (selected) R.drawable.bg_preset_selected else R.drawable.bg_preset_unselected
         )
-        btnPresetCustom.setTextColor(
-            ContextCompat.getColor(this, if (isCustom) R.color.trail_orange else R.color.trail_text_secondary)
+        button.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (selected) R.color.trail_orange else R.color.trail_text_secondary
+            )
         )
     }
 
     /**
-     * Legge l'ultima posizione nota (se disponibile e permesso concesso) e aggiorna
-     * la card grezza/corretta in cima alla schermata.
+     * Legge l'ultima posizione nota (se disponibile) e aggiorna la card
+     * con altitudine grezza e corretta.
      */
     private fun refreshAltitudeCard() {
         if (ContextCompat.checkSelfPermission(
@@ -280,7 +401,6 @@ class MainActivity : AppCompatActivity() {
             startService(intent)
         }
 
-        isOverlayRunning = true
         startButton.text = "Ferma Overlay"
         Toast.makeText(this, "Overlay avviato", Toast.LENGTH_SHORT).show()
     }
@@ -289,7 +409,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, LocationOverlayService::class.java)
         stopService(intent)
 
-        isOverlayRunning = false
         startButton.text = "Avvia Overlay"
         Toast.makeText(this, "Overlay fermato", Toast.LENGTH_SHORT).show()
     }

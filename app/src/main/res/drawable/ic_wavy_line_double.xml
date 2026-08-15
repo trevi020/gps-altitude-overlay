@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="720dp"
+    android:height="28dp"
+    android:viewportWidth="720"
+    android:viewportHeight="28">
+    <!--
+      Viewport alto 28 invece di 24: la curva resta identica ma è centrata a y=14
+      con 4 unità di margine sopra e sotto, così lo spessore del tratto (1.5) non
+      viene mai tagliato ai picchi, nemmeno con arrotondamenti di rendering.
+      Pattern raddoppiato: 0-360 identico a 360-720, per un loop invisibile.
+    -->
+    <path
+        android:pathData="M0,14 Q45,0 90,14 T180,14 T270,14 T360,14 T450,14 T540,14 T630,14 T720,14"
+        android:strokeColor="#7A9B5E"
+        android:strokeWidth="1.5"
+        android:strokeAlpha="1.0"
+        android:fillColor="#00000000" />
+</vector>

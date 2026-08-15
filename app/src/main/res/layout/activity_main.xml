@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Overlay Altitudine"
-            android:textSize="24sp"
+            android:textSize="26sp"
             android:fontFamily="@font/manrope_bold"
             android:textColor="@color/trail_text_primary"
             android:layout_marginBottom="6dp" />
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mostra l'altitudine GPS in overlay sopra qualsiasi app, ideale in navigazione."
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:textColor="@color/trail_text_secondary"
             android:lineSpacingMultiplier="1.5"
             android:layout_marginBottom="20dp"
@@ -54,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="GREZZA (WGS84)"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/trail_text_hint"
                     android:letterSpacing="0.05"
@@ -66,7 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--m"
-                    android:textSize="28sp"
+                    android:textSize="30sp"
                     android:fontFamily="@font/manrope_bold"
                     android:textColor="@color/trail_text_hint" />
 
@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CORRETTA"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/trail_green"
                     android:letterSpacing="0.05"
@@ -104,7 +104,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--m"
-                    android:textSize="28sp"
+                    android:textSize="30sp"
                     android:fontFamily="@font/manrope_bold"
                     android:textColor="@color/trail_text_primary" />
 
@@ -113,12 +113,23 @@
         </LinearLayout>
 
         <!-- Linea decorativa ondulata -->
-        <ImageView
+        <FrameLayout
+            android:id="@+id/wave_container"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_wavy_line"
-            android:layout_marginBottom="20dp"
-            android:contentDescription="@null" />
+            android:layout_height="28dp"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/wave_image"
+                android:layout_width="720dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_wavy_line_double"
+                android:scaleType="fitXY"
+                android:contentDescription="@null" />
+
+        </FrameLayout>
 
         <!-- Sezione correzione geoide: label a sinistra, valore a destra sulla stessa riga -->
         <LinearLayout
@@ -132,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="CORREZIONE GEOIDE"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/trail_text_secondary"
                 android:letterSpacing="0.05"
@@ -144,7 +155,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0.0m"
-                android:textSize="20sp"
+                android:textSize="21.5sp"
                 android:fontFamily="@font/manrope_bold"
                 android:textColor="@color/trail_orange" />
 
@@ -165,7 +176,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Il GPS mostra l'altitudine grezza WGS84, non quella sul livello del mare. Inserisci il valore di correzione per la tua zona (in Italia è circa 47)."
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:textColor="@color/trail_text_hint"
             android:lineSpacingMultiplier="1.4"
             android:layout_marginBottom="14dp"
@@ -185,7 +196,7 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:text="Italia (47)"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textAllCaps="false"
                 android:background="@drawable/bg_preset_selected"
                 android:textColor="@color/trail_orange"
@@ -201,7 +212,7 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:text="UK (55)"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textAllCaps="false"
                 android:background="@drawable/bg_preset_unselected"
                 android:textColor="@color/trail_text_secondary"
@@ -216,7 +227,7 @@
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="Custom"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textAllCaps="false"
                 android:background="@drawable/bg_preset_unselected"
                 android:textColor="@color/trail_text_secondary"
@@ -247,7 +258,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Mostra accuratezza GPS"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textColor="@color/trail_text_primary"
                 android:fontFamily="@font/manrope_medium" />
 
@@ -278,7 +289,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="• Resta visibile sopra ogni app\n• GPS attivo anche in background\n• Doppio tap sull'overlay per cambiare dimensione\n• Trascina l'overlay in basso per chiuderlo"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textColor="@color/trail_text_secondary"
                 android:lineSpacingMultiplier="1.7"
                 android:fontFamily="@font/manrope_medium" />
@@ -296,7 +307,7 @@
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:text="Avvia Overlay"
-            android:textSize="16sp"
+            android:textSize="17.5sp"
             android:textStyle="normal"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
