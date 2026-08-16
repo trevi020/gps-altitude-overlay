@@ -4,11 +4,12 @@
 ![Platform](https://img.shields.io/badge/platform-Android%205.0%2B-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-App Android che mostra un overlay flottante con l'altitudine GPS in tempo reale, utilizzabile sopra qualsiasi altra app — perfetto per la navigazione con Google Maps.
+App Android che mostra un overlay flottante con l'altitudine GPS in tempo reale, utilizzabile sopra qualsiasi altra app — perfetto con il tuo programma di navigazione preferito.
 
 <p align="center">
   <img src="docs/images/screenshot_main.png" width="280" alt="Schermata principale">
-  <img src="docs/images/screenshot_overlay.png" width="280" alt="Overlay in uso">
+  <img src="docs/images/screenshot_overlay.png" width="280" alt="Overlay in uso su Maps">
+  <img src="docs/images/screenshot_overlay_2.png" width="280" alt="Overlay in uso su Waze">
 </p>
 
 ## ⬇️ Download
