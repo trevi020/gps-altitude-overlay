@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Overlay Altitudine</string>
+    <string name="app_name">Altitude Overlay</string>
+    <string name="main_title">Altitude Overlay</string>
+    <string name="main_subtitle">Shows GPS altitude in an overlay above any app, ideal for navigation.</string>
+    <string name="label_raw_altitude">RAW (WGS84)</string>
+    <string name="label_corrected_altitude">CORRECTED</string>
+    <string name="altitude_placeholder">\u2013m</string>
+    <string name="label_geoid_correction">GEOID CORRECTION</string>
+    <string name="geoid_correction_explanation">GPS shows raw WGS84 altitude, not sea level altitude. Enter the correction value for your area (in Italy it\'s about 47).</string>
+    <string name="preset_italy">Italy (47)</string>
+    <string name="preset_uk">UK (55)</string>
+    <string name="preset_custom">Custom</string>
+    <string name="toast_custom_hint">Use the slider to set a custom value</string>
+    <string name="switch_show_accuracy">Show GPS accuracy</string>
+    <string name="info_block">\u2022 Stays visible above every app\n\u2022 GPS active even in background\n\u2022 Double tap the overlay to change its size\n\u2022 Drag the overlay down to close it</string>
+    <string name="btn_start_overlay">Start Overlay</string>
+    <string name="btn_stop_overlay">Stop Overlay</string>
+    <string name="toast_overlay_permission_prompt">Enable the overlay permission for this app, then go back</string>
+    <string name="toast_overlay_permission_denied">Overlay permission not granted</string>
+    <string name="toast_location_permission_required">Location permission required</string>
+    <string name="toast_overlay_started">Overlay started</string>
+    <string name="toast_overlay_stopped">Overlay stopped</string>
+    <string name="overlay_placeholder_text">Altitude: \u2013\u2013</string>
+    <string name="notification_channel_name">Altitude Overlay</string>
+    <string name="notification_title">Altitude Overlay Active</string>
+    <string name="notification_text">Double tap: resize. Drag down: close.</string>
 </resources>

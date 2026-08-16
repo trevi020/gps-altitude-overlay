@@ -85,7 +85,7 @@ class LocationOverlayService : Service() {
 
     private fun setupOverlay() {
         overlayView = TextView(this).apply {
-            text = "Altitudine: --"
+            text = getString(R.string.overlay_placeholder_text)
             setTextColor(0xFFFFFFFF.toInt())
             setBackgroundColor(COLOR_NORMAL)
             gravity = Gravity.CENTER
@@ -230,7 +230,7 @@ class LocationOverlayService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Overlay Altitudine",
+                getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_LOW
             )
             val notificationManager = getSystemService(NotificationManager::class.java)
@@ -238,8 +238,8 @@ class LocationOverlayService : Service() {
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Overlay Altitudine Attivo")
-            .setContentText("Doppio tap: ridimensiona. Trascina in basso: chiudi.")
+            .setContentTitle(getString(R.string.notification_title))
+            .setContentText(getString(R.string.notification_text))
             .setSmallIcon(android.R.drawable.ic_menu_mylocation)
             .build()
 

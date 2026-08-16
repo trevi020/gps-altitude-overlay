@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         btnPresetCustom.setOnClickListener {
             Toast.makeText(
                 this,
-                "Usa lo slider per impostare un valore personalizzato",
+                getString(R.string.toast_custom_hint),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
      * Allinea il testo del pulsante allo stato reale del servizio.
      */
     private fun syncOverlayButtonState() {
-        startButton.text = if (isOverlayServiceRunning()) "Ferma Overlay" else "Avvia Overlay"
+        startButton.text = if (isOverlayServiceRunning()) getString(R.string.btn_stop_overlay) else getString(R.string.btn_start_overlay)
     }
 
     /**
@@ -346,7 +346,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE)
         Toast.makeText(
             this,
-            "Attiva il permesso overlay per questa app, poi torna indietro",
+            getString(R.string.toast_overlay_permission_prompt),
             Toast.LENGTH_LONG
         ).show()
     }
@@ -372,7 +372,7 @@ class MainActivity : AppCompatActivity() {
             if (hasOverlayPermission()) {
                 checkPermissionsAndStart()
             } else {
-                Toast.makeText(this, "Permesso overlay non concesso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.toast_overlay_permission_denied), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -388,7 +388,7 @@ class MainActivity : AppCompatActivity() {
                 startOverlay()
                 refreshAltitudeCard()
             } else {
-                Toast.makeText(this, "Permesso localizzazione necessario", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.toast_location_permission_required), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -401,15 +401,15 @@ class MainActivity : AppCompatActivity() {
             startService(intent)
         }
 
-        startButton.text = "Ferma Overlay"
-        Toast.makeText(this, "Overlay avviato", Toast.LENGTH_SHORT).show()
+        startButton.text = getString(R.string.btn_stop_overlay)
+        Toast.makeText(this, getString(R.string.toast_overlay_started), Toast.LENGTH_SHORT).show()
     }
 
     private fun stopOverlay() {
         val intent = Intent(this, LocationOverlayService::class.java)
         stopService(intent)
 
-        startButton.text = "Avvia Overlay"
-        Toast.makeText(this, "Overlay fermato", Toast.LENGTH_SHORT).show()
+        startButton.text = getString(R.string.btn_start_overlay)
+        Toast.makeText(this, getString(R.string.toast_overlay_stopped), Toast.LENGTH_SHORT).show()
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Overlay Altitudine</string>
+    <string name="main_title">Overlay Altitudine</string>
+    <string name="main_subtitle">Mostra l\'altitudine GPS in overlay sopra qualsiasi app, ideale in navigazione.</string>
+    <string name="label_raw_altitude">GREZZA (WGS84)</string>
+    <string name="label_corrected_altitude">CORRETTA</string>
+    <string name="altitude_placeholder">\u2013m</string>
+    <string name="label_geoid_correction">CORREZIONE GEOIDE</string>
+    <string name="geoid_correction_explanation">Il GPS mostra l\'altitudine grezza WGS84, non quella sul livello del mare. Inserisci il valore di correzione per la tua zona (in Italia è circa 47).</string>
+    <string name="preset_italy">Italia (47)</string>
+    <string name="preset_uk">UK (55)</string>
+    <string name="preset_custom">Custom</string>
+    <string name="toast_custom_hint">Usa lo slider per impostare un valore personalizzato</string>
+    <string name="switch_show_accuracy">Mostra accuratezza GPS</string>
+    <string name="info_block">\u2022 Resta visibile sopra ogni app\n\u2022 GPS attivo anche in background\n\u2022 Doppio tap sull\'overlay per cambiare dimensione\n\u2022 Trascina l\'overlay in basso per chiuderlo</string>
+    <string name="btn_start_overlay">Avvia Overlay</string>
+    <string name="btn_stop_overlay">Ferma Overlay</string>
+    <string name="toast_overlay_permission_prompt">Attiva il permesso overlay per questa app, poi torna indietro</string>
+    <string name="toast_overlay_permission_denied">Permesso overlay non concesso</string>
+    <string name="toast_location_permission_required">Permesso localizzazione necessario</string>
+    <string name="toast_overlay_started">Overlay avviato</string>
+    <string name="toast_overlay_stopped">Overlay fermato</string>
+    <string name="overlay_placeholder_text">Altitudine: \u2013\u2013</string>
+    <string name="notification_channel_name">Overlay Altitudine</string>
+    <string name="notification_title">Overlay Altitudine Attivo</string>
+    <string name="notification_text">Doppio tap: ridimensiona. Trascina in basso: chiudi.</string>
+</resources>
