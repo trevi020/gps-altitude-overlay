@@ -1,5 +1,9 @@
 package com.example.altitudeoverlay
 import com.trevi020.fastigum.R
+import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import android.Manifest
 import android.animation.ValueAnimator
 import android.app.ActivityManager
@@ -57,7 +61,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+                // Layout edge-to-edge: il contenuto/sfondo si estende sotto le barre di sistema
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        // Icone della status bar scure, dato che lo sfondo dell'app è chiaro
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+
+        // Applica il padding di sistema (status bar + nav bar) al contenuto scrollabile,
+        // così testo e pulsanti non finiscono nascosti sotto le barre, ma lo sfondo sì
+        val scrollView = findViewById<android.widget.ScrollView>(R.id.scroll_root)
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top,
+                view.paddingRight,
+                systemBars.bottom
+            )
+            insets
+        }
+        
         startButton = findViewById(R.id.btn_start)
         seekBarCorrection = findViewById(R.id.seekbar_correction)
         textCorrectionValue = findViewById(R.id.text_correction_value)
