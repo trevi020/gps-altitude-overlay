@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Overlay Altitudine</string>
-    <string name="main_title">Overlay Altitudine</string>
+    <string name="app_name">Fastigum</string>
+    <string name="main_title">Fastigum</string>
     <string name="main_subtitle">Mostra l\'altitudine GPS in overlay sopra qualsiasi app, ideale in navigazione.</string>
     <string name="label_raw_altitude">GREZZA (WGS84)</string>
     <string name="label_corrected_altitude">CORRETTA</string>

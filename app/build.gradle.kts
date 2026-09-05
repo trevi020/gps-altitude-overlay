@@ -14,11 +14,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.altitudeoverlay"
+    namespace = "com.trevi020.fastigum"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.altitudeoverlay"
+        applicationId = "com.trevi020.fastigum"
         minSdk = 21
         targetSdk = 34
         versionCode = 8

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Altitude Overlay</string>
-    <string name="main_title">Altitude Overlay</string>
+    <string name="app_name">Fastigum</string>
+    <string name="main_title">Fastigum</string>
     <string name="main_subtitle">Shows GPS altitude in an overlay above any app, ideal for navigation.</string>
     <string name="label_raw_altitude">RAW (WGS84)</string>
     <string name="label_corrected_altitude">CORRECTED</string>
