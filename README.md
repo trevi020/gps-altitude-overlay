@@ -1,4 +1,5 @@
-# 🧭 Overlay Altitudine GPS
+# Fastigum
+### Altitude Overlay for Android (GPS Altitude Overlay)
 
 ![Version](https://img.shields.io/badge/version-0.6.1-blue)
 ![Platform](https://img.shields.io/badge/platform-Android%205.0%2B-brightgreen)
