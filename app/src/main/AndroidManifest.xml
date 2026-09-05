@@ -21,7 +21,7 @@
         android:theme="@style/Theme.AltitudeOverlay">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.altitudeoverlay.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
 
         <!-- Servizio per il monitoraggio della posizione -->
         <service
-            android:name=".LocationOverlayService"
+            android:name="com.example.altitudeoverlay.LocationOverlayService"
             android:foregroundServiceType="location"
             android:exported="false" />
 

@@ -1,5 +1,5 @@
 package com.example.altitudeoverlay
-
+import com.trevi020.fastigum.R
 import android.Manifest
 import android.animation.ValueAnimator
 import android.app.ActivityManager
