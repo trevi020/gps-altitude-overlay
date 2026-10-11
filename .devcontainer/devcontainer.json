@@ -1,18 +1,10 @@
 {
-  "name": "Android Dev",
-  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "name": "Fastigum Android",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "17"
-    }
+    "ghcr.io/devcontainers/features/java:1": { "version": "17", "installGradle": "false" },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "postCreateCommand": "bash setup_codespace.sh",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "vscjava.vscode-java-pack",
-        "redhat.java"
-      ]
-    }
-  }
+  "hostRequirements": { "cpus": 4, "memory": "8gb" },
+  "postCreateCommand": "bash .devcontainer/setup.sh"
 }
