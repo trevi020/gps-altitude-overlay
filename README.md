@@ -1,7 +1,7 @@
 # Fastigum
 ### Altitude Overlay for Android (GPS Altitude Overlay)
 
-![Version](https://img.shields.io/badge/version-0.7.0-blue)
+![Version](https://img.shields.io/badge/version-0.7.1-blue)
 ![Platform](https://img.shields.io/badge/platform-Android%205.0%2B-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
@@ -36,7 +36,7 @@ L'ultima versione è sempre disponibile nella pagina delle [Release](../../relea
 
 ## 🛠️ Build da sorgente
 
-Prerequisiti: JDK 17, Android SDK (API 34), Gradle 8.5 (gestito automaticamente dal wrapper incluso).
+Prerequisiti: JDK 17, Android SDK (API 36, build-tools 35.0.0), Android Gradle Plugin 8.13.2 e Kotlin 2.1.21. Gradle 8.13 è gestito automaticamente dal wrapper incluso.
 
 ```bash
 git clone https://github.com/trevi020/gps-altitude-overlay.git
