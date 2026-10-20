@@ -29,7 +29,7 @@ Un'app Android che mostra un overlay persistente con l'altitudine GPS in tempo r
 ### Prerequisiti
 - Android Studio 2022.1 o superiore
 - SDK minimo: Android 5.0 (API 21)
-- SDK target: Android 14 (API 34)
+- SDK target: Android 16 (API 36)
 
 ### Passaggi
 
@@ -168,7 +168,7 @@ Per risparmiare batteria:
 ## 📝 Versioni Android Supportate
 
 - **Minimo**: Android 5.0 (API 21)
-- **Target**: Android 14 (API 34)
+- **Target**: Android 16 (API 36)
 - **Testato su**: Android 5.0 - 14
 
 ## 🎯 Possibili Miglioramenti Futuri

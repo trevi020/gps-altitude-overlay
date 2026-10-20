@@ -15,7 +15,7 @@ App Android che mostra un overlay flottante con l'altitudine GPS in tempo reale,
 
 ## ⬇️ Download
 
-L'ultima versione è sempre disponibile nella pagina delle [Release](../../releases/latest) — scarica `app-release.apk` e installalo direttamente sul telefono (serve abilitare "Installa da fonti sconosciute").
+Fastigum è distribuita come app a pagamento su Google Play (in arrivo). Su GitHub trovi il codice sorgente di ogni versione nella pagina delle [Release](../../releases/latest): per usarlo, compilalo seguendo la sezione *Build da sorgente* qui sotto.
 
 ## ✨ Funzionalità
 
@@ -43,3 +43,5 @@ git clone https://github.com/trevi020/gps-altitude-overlay.git
 cd gps-altitude-overlay
 ./gradlew assembleRelease --no-daemon
 ```
+
+Guida dettagliata (Codespaces, Android Studio, firma, bundle per Google Play): [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)

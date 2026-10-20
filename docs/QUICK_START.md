@@ -1,181 +1,91 @@
-# 🚀 Quick Start - Overlay Altitudine GPS
+# Quick Start - Fastigum
 
-Hai ricevuto un'app Android completa! Ecco il riassunto in 5 minuti.
+Fastigum mostra l'altitudine GPS in un overlay flottante sopra qualsiasi altra app, ideale in navigazione. L'app è distribuita a pagamento su Google Play (in arrivo); su GitHub trovi il codice sorgente di ogni versione.
 
-## 📦 Cosa Hai
+## Come si usa
 
-### Versione Base (Consigliato per iniziare)
-- ✅ Overlay semplice che mostra altitudine
-- ✅ Mostra anche l'accuratezza del GPS
-- ✅ Interfaccia con pulsanti Avvia/Ferma
-- ✅ Funziona anche mentre usi Maps
+1. Apri l'app e imposta la **correzione geoide** per la tua zona (in Italia è circa 47).
+2. Tocca **Avvia Overlay**.
+3. Concedi i permessi richiesti: localizzazione precisa e "Visualizza sopra altre app".
+4. Apri Google Maps o un'altra app: l'overlay resta visibile.
+5. Per fermarlo, trascinalo in basso oppure riapri Fastigum e tocca **Ferma Overlay**.
 
-### Versione Avanzata (Opzionale dopo)
-- ✨ Overlay trascinabile con il dito
-- ✨ Mostra anche la velocità
-- ✨ Interfaccia migliorata
-
-## 📋 File Principali
-
-| File | Scopo |
-|------|-------|
-| `MainActivity.kt` | Interfaccia dell'app (pulsanti) |
-| `LocationOverlayService.kt` | La magia - gestisce GPS e overlay |
-| `activity_main.xml` | Layout della schermata |
-| `AndroidManifest.xml` | Configurazione permessi |
-| `build.gradle.kts` | Dipendenze (Maps, GPS, ecc.) |
-
-## ⚡ Setup Ultra-Veloce (10 minuti)
+## Cosa mostra l'overlay
 
 ```
-1. Apri Android Studio
-2. New Project → Empty Activity
-3. Copia i file nella giusta posizione (vedi SETUP_GUIDE.md)
-4. Sincronizza Gradle
-5. Run su dispositivo/emulatore
-6. Done! 🎉
+⛰ 324m (±12m)
 ```
 
-Per istruzioni dettagliate → **leggi `SETUP_GUIDE.md`**
+- **Altitudine**: quota sul livello del mare, cioè l'altitudine grezza del GPS (ellissoide WGS84) meno la correzione geoide.
+- **Accuratezza** (±): margine di errore stimato dal GPS. Si può nascondere con l'interruttore **Mostra accuratezza GPS** nella schermata principale.
 
-## 🎮 Come Funziona
+La schermata principale mostra anche, nella scheda in alto, l'altitudine **grezza (WGS84)** e quella **corretta** affiancate.
 
-1. **Accendi l'overlay**: Premi "Avvia Overlay" nell'app
-2. **Minimizza l'app**: Home o apri Maps
-3. **Naviga**: L'overlay rimane sempre visibile in alto a destra
-4. **Ferma**: Riapri l'app e premi "Ferma Overlay"
+## Gesti sull'overlay
 
-```
-┌─────────────────────────────┐
-│ ╱ 📶 Battery   ⏰ 14:35      │  ← Barra di stato
-├─────────────────────────────┤
-│  ┌──────────────────────┐   │
-│  │ Altitudine: 324 m    │ ← OVERLAY (parte dell'app!)
-│  │ Accuratezza: ±12 m   │
-│  └──────────────────────┘   │
-│                             │
-│                             │
-│  Google Maps (altra app)    │
-│  ...                        │
-└─────────────────────────────┘
-```
+| Gesto | Effetto |
+|---|---|
+| Trascina | Sposta l'overlay dove preferisci |
+| Doppio tap | Cambia dimensione: piccola, media, grande (la scelta viene ricordata) |
+| Trascina nella parte bassa dello schermo | L'overlay diventa rosso: rilascia per chiuderlo |
 
-## 📱 Permessi (che ti chiederà)
+## Correzione geoide
 
-L'app ha bisogno di:
-- ✓ **Localizzazione (precisa)** - Per il GPS
-- ✓ **Visualizza sopra altre app** - Per l'overlay
-- ✓ **Servizio in foreground** - Per continuare in background
+Il GPS restituisce l'altitudine rispetto all'ellissoide WGS84, che differisce dal livello del mare di un valore dipendente dalla zona. Nell'app puoi scegliere:
 
-## 🎨 Personalizzazioni Facili
+- **Italia (47)**
+- **UK (55)**
+- **Custom**: sposta lo slider da -100 a +100 metri
 
-### Cambia Position dell'Overlay
-File: `LocationOverlayService.kt`
-```kotlin
-gravity = Gravity.TOP or Gravity.END  // Angolo in alto a destra
-// Opzioni: TOP/BOTTOM/CENTER_VERTICAL
-//         START/CENTER_HORIZONTAL/END
+Il valore scelto viene salvato e usato dall'overlay.
+
+## Permessi
+
+- **Localizzazione precisa**: per leggere il GPS.
+- **Visualizza sopra altre app**: per disegnare l'overlay.
+- **Servizio in primo piano di tipo posizione**: mantiene il GPS attivo in background. Android mostra per questo una notifica permanente finché l'overlay è attivo.
+
+## Per sviluppatori
+
+```bash
+git clone https://github.com/trevi020/gps-altitude-overlay.git
+cd gps-altitude-overlay
+./gradlew assembleDebug --no-daemon
 ```
 
-### Cambia Colore dell'Overlay
-```kotlin
-setTextColor(0xFFFFFFFF.toInt())       // Bianco
-setBackgroundColor(0xFF000000.toInt()) // Nero
-```
+La build di prova non richiede la chiave di firma. Per Codespaces, Android Studio, firma e bundle per Google Play vedi [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
-### Cambia Frequenza Aggiornamenti
-```kotlin
-1000  // Ogni 1 secondo (1000 millisecondi)
-// Prova: 500 (più fluido), 2000 (meno batteria)
-```
+## FAQ
 
-## 📊 Cosa Mostra l'Overlay
+**Funziona con qualsiasi app?**
+Sì, l'overlay si disegna sopra tutte le altre app, non solo Maps.
 
-```
-Altitudine: 324m
-Accuratezza: ±12m
-```
+**Funziona a schermo spento o con l'app in background?**
+Il servizio resta attivo in background finché non lo chiudi, ma l'overlay è visibile solo quando lo schermo è acceso.
 
-- **Altitudine**: Quota in metri sopra il livello del mare
-- **Accuratezza**: Margine di errore (±)
+**Consuma molta batteria?**
+La posizione viene aggiornata ogni secondo con priorità ad alta precisione (tramite `FusedLocationProviderClient`), quindi in uso prolungato il GPS incide sul consumo.
 
-**Nota**: Il primo fix GPS può richiedere 5-10 secondi
+**Che lingue supporta?**
+Italiano e inglese; l'inglese è la lingua predefinita.
 
-## ❓ FAQ Rapide
+## Problemi comuni
 
-### Q: Funziona senza Maps?
-**A**: Sì! Funziona con qualsiasi app. Prova il browser, foto, ecc.
+**L'overlay non appare**
+- GPS acceso
+- permesso "Visualizza sopra altre app" concesso
+- app non chiusa forzatamente
+- su alcuni telefoni (per esempio Xiaomi) consenti l'esecuzione in background dalle impostazioni dell'app
 
-### Q: Consuma molta batteria?
-**A**: No, è ottimizzato. Consuma poco se aumenti l'intervallo di aggiornamento.
+**L'altitudine non compare o resta "-m"**
+Spostati all'aperto e attendi qualche secondo che il GPS si agganci. Con l'emulatore il GPS virtuale non è affidabile: prova su un telefono.
 
-### Q: Posso usare mentre dormo il telefono?
-**A**: Sì! Il servizio continua in background.
+**L'app si chiude all'avvio dell'overlay**
+Controlla che entrambi i permessi siano stati concessi e che il GPS sia attivo.
 
-### Q: Si vede bene al sole?
-**A**: Usa la versione avanzata per personalizzare i colori.
+## Altri documenti
 
-### Q: Posso spostarla?
-**A**: Nella versione base no, ma sì nella versione avanzata (trascinabile).
-
-## 🆘 Se Non Funziona
-
-### L'overlay non appare
-1. Controlla: GPS acceso? ✓
-2. Controlla: Permesso overlay concesso? ✓
-3. Aspetta: Il primo GPS fix richiede tempo
-
-### L'altitudine mostra 0
-1. Spostati all'aperto
-2. Aspetta 30 secondi che il GPS si agganci
-3. Se usi emulatore: È normale, il GPS virtuale è scarso
-
-### Crashes all'avvio
-1. Dai i permessi quando chiesti
-2. Controlla i Log (Logcat in Android Studio)
-
-## 📚 Documenti Completi
-
-- **`README.md`** - Documentazione completa
-- **`SETUP_GUIDE.md`** - Setup dettagliato passo-passo
-- **`ADVANCED_GUIDE.md`** - Versione trascinabile e personalizzazioni
-
-## 🎯 Prossimi Step
-
-### Subito
-1. ✅ Setup il progetto (SETUP_GUIDE.md)
-2. ✅ Testa su dispositivo
-3. ✅ Personalizza colori/posizione
-
-### Dopo
-1. 🚀 Upgrade a versione avanzata (ADVANCED_GUIDE.md)
-2. 🎨 Crea icona personalizzata
-3. 📤 Pubblicare su Play Store
-
-## 💡 Bonus Tips
-
-- **Posizionamento**: Metti l'overlay in un angolo non coperto da Maps
-- **Batteria**: Aumenta `LocationRequest` a 2000ms per risparmiare
-- **Accuatezza**: Usa "Alta Precisione" nelle impostazioni GPS Android
-- **Responsive**: Abbassa `LocationRequest` a 500ms per aggiornamenti più fluidi
-
-## 🎓 Concetti Usati
-
-L'app usa tecnologie moderne di Android:
-- **FusedLocationProviderClient** - API GPS moderna
-- **Foreground Service** - Esecuzione in background
-- **WindowManager** - Overlay sempre in primo piano
-- **LocationCallback** - Aggiornamenti in tempo reale
-
-## 📞 Supporto Tecnico
-
-Se hai problemi:
-1. Leggi la sezione "Troubleshooting" in README.md
-2. Controlla i Log (Logcat)
-3. Verifica i permessi in Impostazioni → App
-
----
-
-**Sei pronto! Buona navigazione con l'altitudine!** 🧭📍
-
-Per iniziare subito → **SETUP_GUIDE.md**
+- [README.md](README.md) - panoramica
+- [SETUP_GUIDE.md](SETUP_GUIDE.md) - compilazione da sorgente e firma
+- [FILE_STRUCTURE.md](FILE_STRUCTURE.md) - mappa dei file del progetto
+- [ADVANCED_GUIDE.md](ADVANCED_GUIDE.md) - funzionamento interno e personalizzazione

@@ -1,245 +1,134 @@
-# Guida Completa - Setup Android Studio
+# Guida alla compilazione da sorgente
 
-Una guida passo dopo passo per creare e configurare l'app dal zero in Android Studio.
+Come compilare Fastigum dal codice sorgente: in GitHub Codespaces, in Android Studio o da riga di comando.
 
-## 🎯 Prerequisiti
+## Prerequisiti
 
-- Android Studio 2022.1+
-- Android SDK 21-34 installati
-- Dispositivo Android 5.0+ o emulatore
+| Componente | Versione |
+|---|---|
+| JDK | 17 |
+| Android SDK | piattaforma 36 (`platforms;android-36`), build-tools 35.0.0 |
+| Android Gradle Plugin | 8.13.2 |
+| Gradle | 8.13 (scaricato dal wrapper `./gradlew`) |
+| Kotlin | 2.1.21 |
+| Dispositivo | Android 5.0 o successivo (minSdk 21) |
 
-## 📋 Step 1: Crea un Nuovo Progetto
-
-### 1.1 Avvia Android Studio
-- Clicca su "File" → "New" → "New Android Project"
-
-### 1.2 Configura il Progetto
-```
-Project Name: Altitude Overlay
-Package Name: com.example.altitudeoverlay
-Save Location: [Cartella desiderata]
-Language: Kotlin
-Minimum SDK: API 21 (Android 5.0)
-```
-
-### 1.3 Seleziona il Template
-- Scegli "Empty Activity"
-- Clicca "Finish"
-
-## 🗂️ Step 2: Organizza la Struttura
-
-Android Studio genererà una struttura di base. Ecco come dovrebbe essere:
+## Struttura del progetto
 
 ```
 app/
-├── src/
-│   ├── main/
-│   │   ├── java/com/example/altitudeoverlay/
-│   │   │   ├── MainActivity.kt          ← Modifica/Sostituisci
-│   │   │   └── LocationOverlayService.kt ← Aggiungi nuovo file
-│   │   ├── res/
-│   │   │   ├── layout/
-│   │   │   │   └── activity_main.xml    ← Modifica/Sostituisci
-│   │   │   ├── drawable/
-│   │   │   │   └── info_background.xml  ← Aggiungi nuovo file
-│   │   │   ├── values/
-│   │   │   │   ├── strings.xml          ← Modifica/Sostituisci
-│   │   │   │   └── styles.xml           ← Modifica/Sostituisci
-│   │   └── AndroidManifest.xml          ← Modifica/Sostituisci
-│   └── build.gradle.kts                 ← Modifica/Sostituisci
-└── [File di configurazione]
+├── build.gradle.kts            ← versioni, firma, dipendenze
+└── src/main/
+    ├── AndroidManifest.xml
+    ├── java/com/example/altitudeoverlay/   ← sorgenti Kotlin
+    └── res/                    ← layout, drawable, values (IT/EN), font
+.devcontainer/                  ← ambiente Codespaces riproducibile
+scripts/save.sh                 ← salvataggio di fine sessione
 ```
 
-## 🔧 Step 3: Modifica build.gradle.kts (a livello app)
+Nota: il namespace è `com.trevi020.fastigum`, mentre i file Kotlin stanno ancora nella cartella `com/example/altitudeoverlay`.
 
-1. **Apri**: `app/build.gradle.kts`
-2. **Sostituisci tutto il contenuto** con il file `build.gradle.kts` fornito
-3. **Sincronizza Gradle**: Click su "Sync Now" (compare in alto)
+## Opzione A: GitHub Codespaces (consigliata)
 
-Aspetta che si completi la sincronizzazione.
+1. Dalla pagina del repository: **Code → Codespaces → New with options**, macchina **4-core / 16 GB**.
+2. Alla creazione parte da solo `.devcontainer/setup.sh`: installa l'Android SDK, accetta le licenze e scrive `local.properties`.
+3. Verifica l'ambiente:
+```bash
+   echo $ANDROID_HOME
+   cat local.properties
+   java -version
+```
+4. Compila una build di prova (non richiede la chiave di firma):
+```bash
+   ./gradlew assembleDebug --no-daemon
+```
+   L'APK è in `app/build/outputs/apk/debug/app-debug.apk`.
 
-## 📱 Step 4: Configura AndroidManifest.xml
+Un Codespace inattivo viene eliminato dopo alcuni giorni: prima di fermarti esegui `bash scripts/save.sh`, che salva anche il lavoro a metà sul branch `wip/codespace-backup`.
 
-1. **Apri**: `app/src/main/AndroidManifest.xml`
-2. **Sostituisci il contenuto** con il file `AndroidManifest.xml` fornito
-3. **Salva**: Ctrl+S (Cmd+S su Mac)
+## Opzione B: Android Studio
 
-### Verifica i permessi:
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+1. Installa una versione recente di Android Studio (Narwhal o successiva).
+2. **File → Open** e scegli la cartella del progetto. Attendi la sincronizzazione di Gradle.
+3. Se richiesto, installa dall'SDK Manager la piattaforma 36 e le build-tools 35.0.0.
+4. Collega il telefono (debug USB attivo) e premi **Run**.
+
+## Opzione C: riga di comando su PC
+
+1. Installa JDK 17 e gli [Android command-line tools](https://developer.android.com/studio#command-line-tools-only).
+2. Imposta `ANDROID_HOME` e installa i pacchetti:
+```bash
+   sdkmanager --licenses
+   sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0"
+```
+3. Crea `local.properties` nella radice:
+```
+   sdk.dir=/percorso/del/tuo/android-sdk
+```
+4. Compila con `./gradlew assembleDebug`.
+
+## Firma per le build release
+
+`assembleRelease` e `bundleRelease` richiedono una chiave di firma. Se non ne hai una, creala:
+
+```bash
+keytool -genkeypair -v -keystore mia-chiave.keystore -alias mio_alias \
+  -keyalg RSA -keysize 2048 -validity 10000
 ```
 
-## 💻 Step 5: Aggiungi i File Kotlin
-
-### 5.1 MainActivity.kt
-1. **Vai a**: `app/src/main/java/com/example/altitudeoverlay/MainActivity.kt`
-2. **Sostituisci il contenuto** con il file `MainActivity.kt` fornito
-3. **Salva**: Ctrl+S
-
-### 5.2 LocationOverlayService.kt
-1. **Clicca destro** su `app/src/main/java/com/example/altitudeoverlay/`
-2. **New** → **Kotlin File/Class**
-3. **Name**: `LocationOverlayService`
-4. **Copia il contenuto** dal file `LocationOverlayService.kt` fornito
-5. **Salva**: Ctrl+S
-
-## 🎨 Step 6: Aggiungi i File di Risorse
-
-### 6.1 activity_main.xml
-1. **Vai a**: `app/src/main/res/layout/`
-2. **Se esiste `activity_main.xml`**, eliminalo o sostituiscilo
-3. **Clicca destro** → **New** → **Layout Resource File**
-4. **Filename**: `activity_main`
-5. **Copia il contenuto** dal file XML fornito
-6. **Salva**
-
-### 6.2 info_background.xml (Drawable)
-1. **Vai a**: `app/src/main/res/drawable/`
-2. **Se la cartella non esiste**, creala
-3. **Clicca destro** → **New** → **XML Resource File**
-4. **Filename**: `info_background`
-5. **Root Element**: `shape`
-6. **Copia il contenuto** dal file XML fornito
-7. **Salva**
-
-### 6.3 strings.xml
-1. **Vai a**: `app/src/main/res/values/strings.xml`
-2. **Sostituisci il contenuto** con il file `strings.xml` fornito
-3. **Salva**
-
-### 6.4 styles.xml
-1. **Vai a**: `app/src/main/res/values/styles.xml`
-2. **Se non esiste**, clicca destro nella cartella → **New** → **Values Resource File**
-3. **Filename**: `styles`
-4. **Sostituisci il contenuto** con il file `styles.xml` fornito
-5. **Salva**
-
-## ✅ Step 7: Verifica i File
-
-Dopo aver aggiunto tutti i file, la struttura dovrebbe essere:
+Poi crea nella radice del progetto il file `keystore.properties`:
 
 ```
-app/src/main/
-├── java/com/example/altitudeoverlay/
-│   ├── MainActivity.kt ✓
-│   └── LocationOverlayService.kt ✓
-├── res/
-│   ├── layout/activity_main.xml ✓
-│   ├── drawable/info_background.xml ✓
-│   ├── values/
-│   │   ├── strings.xml ✓
-│   │   ├── styles.xml ✓
-│   │   └── colors.xml (auto-generato)
-│   └── [altre cartelle standard]
-└── AndroidManifest.xml ✓
+storeFile=/percorso/assoluto/mia-chiave.keystore
+storePassword=la_tua_password
+keyAlias=mio_alias
+keyPassword=la_tua_password
 ```
 
-## 🧪 Step 8: Sincronizza e Compila
+Note importanti:
 
-1. **Sincronizza Gradle**
-   - Click "Sync Now" (se appare)
-   - Oppure: File → Sync Project with Gradle Files
+- `storeFile` viene risolto a partire dalla cartella `app/`: usa un percorso assoluto, oppure `../mia-chiave.keystore` se il file sta nella radice.
+- `keystore.properties` e i file `*.keystore` sono esclusi da git: **non committarli mai**.
+- Conserva keystore e password in almeno due posti sicuri fuori dal repository. Senza la chiave non puoi più pubblicare aggiornamenti compatibili.
 
-2. **Compila il Progetto**
-   - Build → Rebuild Project
-   - Aspetta fino a vedere "Build Successful"
+Comandi di build:
 
-## 📱 Step 9: Esegui l'App
+```bash
+./gradlew assembleRelease --no-daemon   # APK in app/build/outputs/apk/release/
+./gradlew bundleRelease --no-daemon     # AAB in app/build/outputs/bundle/release/
+```
 
-### Opzione A: Su Dispositivo Fisico
-1. **Connetti il telefono via USB**
-2. **Abilita "USB Debugging"**
-   - Impostazioni → Opzioni Sviluppatore → USB Debugging
-3. **Run** → **Run 'app'**
-4. **Seleziona il dispositivo** dalla lista
+Per Google Play serve l'**AAB**. Prima di ogni nuovo caricamento aumenta `versionCode` in `app/build.gradle.kts`.
 
-### Opzione B: Su Emulatore
-1. **Avvia un emulatore**
-   - Tools → Device Manager → Crea/Avvia dispositivo virtuale
-2. **Run** → **Run 'app'**
-3. **Seleziona l'emulatore** dalla lista
+## Installare e provare l'app
 
-## 🚀 Step 10: Test dell'App
+1. Installa l'APK sul telefono (`adb install -r app-debug.apk`, oppure copia il file e aprilo).
+2. Apri l'app e tocca **Avvia Overlay**.
+3. Concedi i permessi: localizzazione precisa e "Visualizza sopra altre app".
+4. Apri Google Maps o un'altra app: l'overlay con l'altitudine resta visibile. Trascinalo per spostarlo, doppio tap per cambiarne la dimensione, trascinalo in basso per chiuderlo.
 
-### Primo Avvio
-1. L'app si apre con due pulsanti
-2. Tocca "Avvia Overlay"
-3. Concedi i permessi:
-   - ✓ Localizzazione (precisa)
-   - ✓ Visualizza sopra altre app
+## Risoluzione dei problemi
 
-### Verifica del Funzionamento
-1. Apri Google Maps
-2. Naviga in una zona
-3. Dovresti vedere l'overlay in alto a destra con:
-   ```
-   Altitudine: XXXX m
-   Accuratezza: ±XX m
-   ```
+**`SigningConfig "release" is missing required property "storeFile"`**
+Manca `keystore.properties` nella radice del progetto, oppure `storeFile` non punta al keystore. Vedi la sezione sulla firma.
 
-## 🐛 Risoluzione Problemi Comuni
+**`SDK location not found`**
+Manca `local.properties` con `sdk.dir`. In Codespaces lo crea `setup.sh`: rilancialo con `bash .devcontainer/setup.sh`.
 
-### Error: "Unresolved reference 'LocationServices'"
-**Causa**: Google Play Services non sincronizzato
-**Soluzione**:
-1. File → Project Structure
-2. Dependencies → Add
-3. Aggiungi: `com.google.android.gms:play-services-location`
-4. Sincronizza
+**Pacchetto SDK non trovato o licenze non accettate**
+```bash
+sdkmanager --licenses
+sdkmanager "platforms;android-36" "build-tools;35.0.0"
+```
 
-### Error: "Cannot resolve symbol 'MainActivity'"
-**Soluzione**:
-1. File → Invalidate Caches
-2. Restart
-3. Rebuild Project
+**La build termina per memoria esaurita**
+In `gradle.properties` imposta `org.gradle.jvmargs=-Xmx2048m` e usa una macchina con almeno 4 core.
 
-### L'app crasha al click su "Avvia Overlay"
-**Soluzione**:
-1. Controlla che tutti i permessi siano stati concessi
-2. Abilita il GPS del dispositivo
-3. Verifica che non ci siano errori nei Log (Logcat)
+**Errori su versione di Java**
+Gradle deve girare con JDK 17 (`java -version`).
 
-### Non vedo l'overlay
-**Checklist**:
-- [ ] GPS è acceso
-- [ ] Permesso "Visualizza sopra altre app" concesso
-- [ ] App non è stata force-closed
-- [ ] La app sta lavorando in background
-
-## 📝 Personalizzazioni Finali
-
-Dopo che l'app funziona:
-
-### Cambia l'Icona dell'App
-1. Right-click su `app/res/mipmap/`
-2. Image Asset → Seleziona foto
-3. Configura come desiderato
-
-### Cambia il Nome dell'App
-1. **File**: `app/src/main/res/values/strings.xml`
-2. **Modifica**: `<string name="app_name">Mio Nome App</string>`
-
-### Cambia Colori e Stili
-1. **File**: `app/src/main/res/values/styles.xml`
-2. **Modifica i valori di colore**
-
-## ✨ Congratulazioni!
-
-La tua app è pronta. Prossimi step facoltativi:
-
-- [ ] Scarica la versione avanzata (vedi ADVANCED_GUIDE.md)
-- [ ] Personalizza colori e layout
-- [ ] Pubblica su Google Play Store (richiede account sviluppatore)
-
-## 🎓 Prossimi Passi (Opzionali)
-
-1. **Aggiungi SettingsActivity** per configurazioni
-2. **Implementa SharedPreferences** per salvare posizione overlay
-3. **Aggiungi Widget** per controllo rapido
-4. **Crea Notifiche** per altitudini significative
-
----
-
-**Buona programmazione!** 👨‍💻
+**Non vedo l'overlay**
+- GPS acceso
+- permesso "Visualizza sopra altre app" concesso
+- app non chiusa forzatamente
+- su alcuni telefoni (per esempio Xiaomi) consenti l'esecuzione in background nelle impostazioni dell'app

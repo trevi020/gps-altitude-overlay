@@ -1,327 +1,97 @@
-# 📁 Struttura Completa dei File
+# Struttura dei file
 
-Guida visuale su dove mettere ogni file nel progetto Android.
+Mappa del repository Fastigum.
 
-## 🏗️ Struttura Finale del Progetto
+## Albero del progetto
 
 ```
-AltitudeOverlay/                          (Root del progetto)
-│
+gps-altitude-overlay/
 ├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/example/altitudeoverlay/
-│   │   │   │       ├── MainActivity.kt                    ← Sostituisci
-│   │   │   │       └── LocationOverlayService.kt          ← Nuovo file
-│   │   │   │
-│   │   │   ├── res/
-│   │   │   │   ├── layout/
-│   │   │   │   │   └── activity_main.xml                 ← Sostituisci
-│   │   │   │   │
-│   │   │   │   ├── drawable/
-│   │   │   │   │   └── info_background.xml               ← Nuovo file
-│   │   │   │   │
-│   │   │   │   ├── values/
-│   │   │   │   │   ├── strings.xml                       ← Sostituisci
-│   │   │   │   │   ├── styles.xml                        ← Nuovo file
-│   │   │   │   │   ├── colors.xml                        (Auto-generato)
-│   │   │   │   │   ├── themes.xml                        (Auto-generato)
-│   │   │   │   │   └── dimens.xml                        (Auto-generato)
-│   │   │   │   │
-│   │   │   │   ├── mipmap/                               (Icone)
-│   │   │   │   │   ├── ic_launcher.xml
-│   │   │   │   │   └── ic_launcher_round.xml
-│   │   │   │   │
-│   │   │   │   └── values-night/                         (Auto-generato)
-│   │   │   │       └── themes.xml
-│   │   │   │
-│   │   │   └── AndroidManifest.xml                       ← Sostituisci
-│   │   │
-│   │   └── test/                                         (Non toccare)
-│   │
-│   ├── build.gradle.kts                                   ← Sostituisci
-│   ├── proguard-rules.pro                                (Non toccare)
-│   └── .gitignore                                        (Non toccare)
-│
-├── gradle/
-│   └── wrapper/                                          (Non toccare)
-│
-├── build.gradle.kts                                      (Non toccare)
-├── settings.gradle.kts                                   (Non toccare)
-├── gradle.properties                                     (Non toccare)
-│
-└── [File di configurazione IDE]
-
+│   ├── build.gradle.kts                 ← versioni, firma, dipendenze
+│   └── src/main/
+│       ├── AndroidManifest.xml
+│       ├── java/com/example/altitudeoverlay/
+│       │   ├── MainActivity.kt
+│       │   ├── LocationOverlayService.kt
+│       │   └── GeoidCorrection.kt
+│       └── res/
+│           ├── drawable/                ← sfondi, pulsanti, linea ondulata, icona
+│           ├── font/                    ← Manrope (regular, medium, bold, extrabold)
+│           ├── layout/activity_main.xml
+│           ├── mipmap-anydpi-v26/       ← icona adattiva (normale e rotonda)
+│           ├── values/                  ← colors.xml, strings.xml (EN), styles.xml
+│           └── values-it/strings.xml    ← traduzione italiana
+├── build.gradle.kts                     ← versioni dei plugin (AGP, Kotlin)
+├── settings.gradle.kts
+├── gradle.properties
+├── gradle/wrapper/                      ← Gradle 8.13 (wrapper)
+├── gradlew, gradlew.bat
+├── .devcontainer/                       ← ambiente Codespaces riproducibile
+│   ├── devcontainer.json
+│   └── setup.sh                         ← installa l'Android SDK
+├── scripts/save.sh                      ← salvataggio di fine sessione
+├── docs/                                ← documentazione e screenshot
+├── README.md
+├── LICENCE
+└── .gitignore
 ```
 
-## 📄 Lista Completa di File da Aggiungere/Modificare
+Nota: il namespace dell'app è `com.trevi020.fastigum`, mentre i file Kotlin si trovano ancora nel package `com.example.altitudeoverlay`. La migrazione della cartella è un'operazione di pulizia rimandata.
 
-### 1️⃣ File Kotlin
+## Codice Kotlin
 
-#### `MainActivity.kt`
-```
-Posizione: app/src/main/java/com/example/altitudeoverlay/MainActivity.kt
-Azione: SOSTITUISCI (esiste già, sovrascrivilo)
-Versione: Base (sempre consigliato iniziare da qui)
-```
+| File | Ruolo |
+|---|---|
+| `MainActivity.kt` | Schermata principale: scheda altitudine grezza/corretta, slider della correzione geoide, preset Italia/UK/Custom, interruttore accuratezza, gestione dei permessi, avvio e arresto dell'overlay, animazione della linea ondulata |
+| `LocationOverlayService.kt` | Servizio in primo piano: legge il GPS, disegna l'overlay con `WindowManager`, gestisce trascinamento, doppio tap e chiusura per trascinamento |
+| `GeoidCorrection.kt` | Salva e legge le preferenze (correzione geoide, mostra accuratezza) e calcola l'altitudine corretta |
 
-#### `LocationOverlayService.kt`
-```
-Posizione: app/src/main/java/com/example/altitudeoverlay/LocationOverlayService.kt
-Azione: CREA NUOVO FILE
-Versione: Base
-Como creare: Clicca destro su "altitudeoverlay" → New → Kotlin File/Class
-```
+## Risorse
 
-#### `LocationOverlayServiceAdvanced.kt` (Opzionale)
-```
-Posizione: app/src/main/java/com/example/altitudeoverlay/LocationOverlayServiceAdvanced.kt
-Azione: CREA NUOVO FILE
-Versione: Avanzata (trascinabile)
-Quando: Dopo che la versione base funziona
-```
+| Percorso | Contenuto |
+|---|---|
+| `res/layout/activity_main.xml` | Layout della schermata principale |
+| `res/values/colors.xml` | Palette Trail (vedi ADVANCED_GUIDE.md) |
+| `res/values/strings.xml` | Testi in inglese (lingua predefinita) |
+| `res/values-it/strings.xml` | Testi in italiano |
+| `res/values/styles.xml` | Tema, barre di sistema trasparenti (edge-to-edge) |
+| `res/drawable/bg_card_white.xml` | Sfondo della scheda altitudine |
+| `res/drawable/bg_pill_button.xml` | Pulsante Avvia/Ferma Overlay |
+| `res/drawable/bg_preset_selected.xml`, `bg_preset_unselected.xml` | Stati dei pulsanti preset |
+| `res/drawable/info_background.xml` | Sfondo del blocco informativo |
+| `res/drawable/ic_wavy_line_double.xml` | Linea ondulata animata |
+| `res/drawable/ic_launcher_*.xml` | Icona dell'app: sfondo, primo piano, versione monocromatica |
+| `res/mipmap-anydpi-v26/ic_launcher*.xml` | Icona adattiva (normale e rotonda) |
+| `res/font/manrope_*.ttf` | Font Manrope in quattro pesi |
 
-### 2️⃣ File XML Layout
+## Configurazione e build
 
-#### `activity_main.xml`
-```
-Posizione: app/src/main/res/layout/activity_main.xml
-Azione: SOSTITUISCI (esiste già)
-Nota: Se non esiste la cartella 'layout', creala
-```
+| File | Scopo |
+|---|---|
+| `app/build.gradle.kts` | `namespace`, `applicationId`, `compileSdk`/`targetSdk`, `versionCode`/`versionName`, firma release, dipendenze |
+| `build.gradle.kts` (radice) | Versioni di Android Gradle Plugin e Kotlin |
+| `gradle.properties` | Opzioni Gradle, tra cui la memoria della JVM |
+| `gradle/wrapper/gradle-wrapper.properties` | Versione di Gradle usata dal wrapper |
+| `AndroidManifest.xml` | Permessi, activity, servizio in primo piano di tipo `location` |
 
-### 3️⃣ File XML Drawable
+## Fuori dal repository (non committare mai)
 
-#### `info_background.xml`
-```
-Posizione: app/src/main/res/drawable/info_background.xml
-Azione: CREA NUOVO FILE
-Come creare: Clicca destro su "drawable" → New → XML Resource File
-Root Element: shape
-```
+| File | Perché |
+|---|---|
+| `keystore.properties` | Credenziali di firma: da creare a mano (vedi SETUP_GUIDE.md) |
+| `*.keystore`, `*.jks` | Chiave di firma dell'app |
+| `local.properties` | Percorso dell'Android SDK della tua macchina; lo genera `setup.sh` |
+| `app/build/`, `.gradle/` | File generati dalla compilazione |
 
-### 4️⃣ File XML Values
+Tutti questi percorsi sono già elencati in `.gitignore`.
 
-#### `strings.xml`
-```
-Posizione: app/src/main/res/values/strings.xml
-Azione: SOSTITUISCI (esiste già)
-Nota: Contiene i testi dell'app
-```
+## Documentazione
 
-#### `styles.xml`
-```
-Posizione: app/src/main/res/values/styles.xml
-Azione: CREA NUOVO FILE (potrebbe non esistere)
-Come creare: Clicca destro su "values" → New → Values Resource File
-Filename: styles
-```
-
-### 5️⃣ File di Configurazione
-
-#### `AndroidManifest.xml`
-```
-Posizione: app/src/main/AndroidManifest.xml
-Azione: SOSTITUISCI (esiste già)
-IMPORTANTE: Contiene i permessi necessari
-```
-
-#### `build.gradle.kts` (a livello app)
-```
-Posizione: app/build.gradle.kts
-Azione: SOSTITUISCI (esiste già)
-IMPORTANTE: Contiene le dipendenze (Google Play Services)
-Dopo: Sincronizza Gradle
-```
-
-### 6️⃣ File Documentazione
-
-Questi sono di aiuto, non vanno nel progetto:
-- `README.md` - Leggi per info generali
-- `SETUP_GUIDE.md` - Leggi per setup passo-passo
-- `ADVANCED_GUIDE.md` - Leggi per versione avanzata
-- `QUICK_START.md` - Leggi per inizio veloce
-- `FILE_STRUCTURE.md` - Questo file
-
-## 🗺️ Mappa Azioni
-
-### ✏️ SOSTITUISCI (questi file esistono già)
-```
-1. MainActivity.kt
-2. activity_main.xml
-3. strings.xml
-4. AndroidManifest.xml
-5. build.gradle.kts
-```
-
-### ✨ CREA NUOVO FILE
-```
-1. LocationOverlayService.kt (cartella java)
-2. LocationOverlayServiceAdvanced.kt (opzionale, cartella java)
-3. info_background.xml (cartella drawable)
-4. styles.xml (cartella values)
-```
-
-## 🎯 Procedura Passo-Passo
-
-### Fase 1: Setup Iniziale (2 min)
-```
-1. Apri Android Studio
-2. File → New → New Android Project
-3. Usa: com.example.altitudeoverlay
-4. Clicca Finish
-5. Aspetta sincronizzazione
-```
-
-### Fase 2: Aggiungi Dipendenze (3 min)
-```
-1. Apri: app/build.gradle.kts
-2. Sostituisci il contenuto
-3. Sincronizza Gradle
-4. Aspetta completamento
-```
-
-### Fase 3: Configura Manifest (2 min)
-```
-1. Apri: app/src/main/AndroidManifest.xml
-2. Sostituisci il contenuto
-3. Salva
-```
-
-### Fase 4: Aggiungi File Kotlin (3 min)
-```
-1. Sostituisci MainActivity.kt
-2. Crea LocationOverlayService.kt
-3. Salva entrambi
-```
-
-### Fase 5: Aggiungi File XML (2 min)
-```
-1. Sostituisci activity_main.xml
-2. Crea info_background.xml
-3. Sostituisci/Crea strings.xml
-4. Crea styles.xml
-5. Salva tutti
-```
-
-### Fase 6: Build e Test (3 min)
-```
-1. Build → Rebuild Project
-2. Aspetta "Build Successful"
-3. Run → Run 'app'
-4. Seleziona dispositivo
-5. Testa l'app
-```
-
-**Tempo totale: ~15 minuti**
-
-## 📋 Checklist Veloce
-
-Prima di compilare, verifica:
-
-- [ ] MainActivity.kt sostituito
-- [ ] LocationOverlayService.kt creato
-- [ ] activity_main.xml sostituito
-- [ ] info_background.xml creato
-- [ ] strings.xml sostituito
-- [ ] styles.xml creato
-- [ ] AndroidManifest.xml sostituito
-- [ ] build.gradle.kts sostituito
-- [ ] Gradle sincronizzato
-- [ ] Nessun errore rosso nell'editor
-
-## 🐛 Problemi Comuni & Soluzioni
-
-### "File not found"
-- Verifica il percorso esatto
-- Assicurati di usare la giusta cartella
-
-### "Unresolved reference"
-- Sincronizza Gradle (Sync Now)
-- Invalida cache (File → Invalidate Caches)
-
-### "Cannot create class in package"
-- Verifica che il package sia corretto: `com.example.altitudeoverlay`
-- Crea la struttura di cartelle manualmente se necessario
-
-### "Build failed"
-- Controlla che build.gradle.kts sia corretto
-- Sincronizza di nuovo
-
-## ✅ Verifiche Finali
-
-Dopo che tutto è setup:
-
-```kotlin
-// MainActivity.kt deve importare:
-import android.Manifest
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-
-// LocationOverlayService.kt deve importare:
-import com.google.android.gms.location.LocationServices
-import android.view.WindowManager
-```
-
-Se il codice è rosso, sincronizza Gradle di nuovo.
-
-## 🎨 Cartelle che Dovrebbero Esistere
-
-```
-app/src/main/res/
-├── drawable/          ← Aggiungi qui info_background.xml
-├── layout/            ← Sostituisci activity_main.xml
-├── values/            ← Sostituisci strings.xml, aggiungi styles.xml
-├── values-night/      (auto)
-└── mipmap/            (non toccare)
-```
-
-Se cartelle non esistono, creale:
-- Clicca destro su `res/`
-- New → Folder
-
-## 📱 Struttura App
-
-```
-┌─────────────────────────────┐
-│  MainActivity               │
-│  (2 pulsanti: Avvia/Ferma) │
-└────────────┬────────────────┘
-             │ Clicca Avvia
-             ▼
-┌─────────────────────────────┐
-│  LocationOverlayService     │
-│  (Crea overlay con GPS)     │
-└────────────┬────────────────┘
-             │ Mostra
-             ▼
-┌─────────────────────────────┐
-│  Overlay su tutte le app    │
-│  Altitudine: 324m           │
-│  Accuratezza: ±12m          │
-└─────────────────────────────┘
-```
-
-## 🎯 Scorciatoie Utili
-
-### In Android Studio:
-- `Ctrl+Shift+A` - Cerca azioni
-- `Ctrl+N` - Crea nuovo file
-- `Ctrl+Alt+S` - Impostazioni
-- `Ctrl+B` - Compila
-- `Shift+F10` - Run
-
-### Nel File System:
-- Copia/Incolla direttamente i file XML
-- Oppure copia contenuto e incolla in Android Studio
-
-## 📞 Se Hai Dubbi
-
-1. Leggi `SETUP_GUIDE.md` - Ha screenshot e dettagli
-2. Leggi `QUICK_START.md` - Ha una versione condensata
-3. Controlla il tuo percorso - Molto importante!
-
----
-
-**Struttura = Fondamento dell'app. Non saltare passaggi!** 🏗️
+| File | Contenuto |
+|---|---|
+| `README.md` | Panoramica del progetto |
+| `docs/QUICK_START.md` | Uso dell'app e problemi comuni |
+| `docs/SETUP_GUIDE.md` | Compilazione, firma, bundle per Google Play |
+| `docs/FILE_STRUCTURE.md` | Questo file |
+| `docs/ADVANCED_GUIDE.md` | Funzionamento interno e personalizzazione |
+| `docs/images/` | Screenshot usati nel README |

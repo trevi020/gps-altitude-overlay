@@ -1,207 +1,139 @@
-# Guida Versione Avanzata - Overlay Trascinabile
+# Guida per sviluppatori
 
-Questa guida spiega come passare alla versione avanzata del servizio che include funzionalità aggiuntive.
+Come funziona Fastigum al suo interno e come personalizzarlo. Per compilare il progetto vedi [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
-## 🚀 Nuove Funzionalità nella Versione Avanzata
+## Architettura
 
-### 1. **Overlay Trascinabile**
-L'overlay può essere spostato sullo schermo trascinandolo con le dita.
+L'app ha tre componenti Kotlin:
 
-### 2. **Mostra Velocità**
-Visualizza la velocità di movimento in km/h (oltre all'altitudine).
+- **`MainActivity`**: interfaccia, permessi, avvio e arresto del servizio.
+- **`LocationOverlayService`**: servizio in primo piano (`foregroundServiceType="location"`) che legge il GPS e disegna l'overlay.
+- **`GeoidCorrection`**: oggetto che salva le preferenze in `SharedPreferences` e calcola l'altitudine corretta.
 
-### 3. **Layout Migliorato**
-Migliore presentazione dei dati con layout verticale ordinato.
+```
+MainActivity ──avvia──▶ LocationOverlayService ──legge──▶ GeoidCorrection
+     │                          │                              ▲
+     └── salva slider/switch ───┴──────── SharedPreferences ───┘
+```
 
-### 4. **Tocco Ottimizzato**
-Gestione intelligente dei tocchi per distinguere tra trascinamento e tocchi accidentali.
+L'activity e il servizio comunicano solo tramite le preferenze condivise e l'avvio/arresto del servizio: non c'è binding (`onBind` restituisce `null`).
 
-## 📦 Installazione
+## Calcolo dell'altitudine
 
-### Opzione A: Usa la Versione Avanzata (Consigliato)
+Il GPS fornisce `location.altitude`, riferita all'ellissoide WGS84. L'altitudine mostrata è:
 
-1. **Sostituisci il servizio**
-   - Elimina `LocationOverlayService.kt`
-   - Rinomina `LocationOverlayServiceAdvanced.kt` → `LocationOverlayService.kt`
-   - Aggiorna i riferimenti nel `MainActivity.kt` (dovrebbero già essere corretti)
+```
+altitudine corretta = altitudine grezza - correzione geoide
+```
 
-2. **Sincronizza e compila**
-   ```bash
-   Gradle → Sync Now
-   Run → Run 'app'
-   ```
+La correzione (l'ondulazione del geoide, detta N) dipende dalla zona: circa 47 m nell'Italia settentrionale, circa 55 m nel Regno Unito. Il valore predefinito, se l'utente non ha mai scelto nulla, è 0.
 
-### Opzione B: Mantieni Entrambe le Versioni
+## Preferenze salvate
 
-Se vuoi mantenere entrambe le versioni:
+Tutte in `SharedPreferences` con nome `overlay_prefs`:
 
-1. **Copia `LocationOverlayServiceAdvanced.kt`** così com'è
-2. **Aggiungi un toggle nel MainActivity** per scegliere quale servizio usare
+| Chiave | Tipo | Predefinito | Scritta da |
+|---|---|---|---|
+| `geoid_undulation_n` | float | 0 | slider e preset in `MainActivity` |
+| `show_accuracy` | boolean | true | interruttore in `MainActivity` |
+| `overlay_size` | stringa (`PICCOLA`, `MEDIA`, `GRANDE`) | `PICCOLA` | doppio tap in `LocationOverlayService` |
 
-Esempio di toggle nel `MainActivity.kt`:
+## Comportamento dell'overlay
+
+- **Aggiornamento**: ogni secondo, con priorità `PRIORITY_HIGH_ACCURACY`.
+- **Trascinamento**: l'overlay segue il dito (`ACTION_MOVE`).
+- **Doppio tap**: passa ciclicamente tra le tre dimensioni e salva la scelta.
+- **Chiusura**: se l'overlay viene rilasciato nel 12% inferiore dello schermo, il servizio si ferma (`stopSelf()`). Durante il trascinamento in quella zona lo sfondo diventa rosso.
+
+## Personalizzazioni
+
+Tutti i punti seguenti sono in `LocationOverlayService.kt`.
+
+### Dimensioni dell'overlay
 
 ```kotlin
-private var useAdvanced = true  // Aggiungi questa variabile
-
-private fun startOverlay() {
-    val serviceClass = if (useAdvanced) {
-        LocationOverlayServiceAdvanced::class.java
-    } else {
-        LocationOverlayService::class.java
-    }
-    
-    val intent = Intent(this, serviceClass)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        startForegroundService(intent)
-    } else {
-        startService(intent)
-    }
-    // ... resto del codice
+private enum class OverlaySize(val textSizeSp: Float, val paddingPx: Int) {
+    PICCOLA(16f, 24),
+    MEDIA(24f, 32),
+    GRANDE(34f, 40)
 }
 ```
 
-E aggiorna il manifest per registrare entrambi i servizi:
+Modifica la dimensione del testo (sp) e il margine interno (px) di ogni livello, oppure aggiungi un livello: il doppio tap li scorre tutti in ordine.
 
-```xml
-<service
-    android:name=".LocationOverlayService"
-    android:foregroundServiceType="location"
-    android:exported="false" />
-
-<service
-    android:name=".LocationOverlayServiceAdvanced"
-    android:foregroundServiceType="location"
-    android:exported="false" />
-```
-
-## 🎨 Personalizzazione Avanzata
-
-### Cambia Colore dello Sfondo
-
-Modifica in `LocationOverlayServiceAdvanced.kt`:
+### Frequenza di aggiornamento
 
 ```kotlin
-overlayContainer = LinearLayout(this).apply {
-    // ...
-    setBackgroundColor(0xCC000000.toInt())  // CC = trasparenza (0-FF)
-    // Esempi:
-    // 0x99000000 - Più trasparente
-    // 0xFF000000 - Completamente opaco
-    // 0xFFFF5722 - Arancione scuro
-}
+val locationRequest = LocationRequest.Builder(
+    Priority.PRIORITY_HIGH_ACCURACY,
+    1000
+).build()
 ```
 
-### Cambia Formato della Velocità
+Il secondo parametro è l'intervallo in millisecondi. Valori più alti riducono il consumo di batteria, valori più bassi rendono più fluido l'aggiornamento.
 
-Sostituisci le righe nel metodo `updateOverlay()`:
+### Zona di chiusura
 
 ```kotlin
-// Da km/h a m/s
-val speed = location.speed  // Mantieni m/s
-
-// Da km/h a mph (miglia orarie)
-val speedMph = (location.speed * 2.237).toInt()
+dismissZoneTopY = (screenHeight * 0.88).toInt()
 ```
 
-### Personalizza il Sensibilità del Trascinamento
+Il numero indica da che altezza dello schermo (0 = in alto, 1 = in basso) parte la zona di chiusura.
 
-Nel metodo `handleOverlayTouch()`, modifica il valore di 5:
+### Colori dell'overlay
+
+`COLOR_NORMAL` e `COLOR_DISMISS` (all'inizio della classe) definiscono lo sfondo normale e quello mostrato nella zona di chiusura, nel formato ARGB.
+
+### Testo mostrato
+
+In `updateOverlay()`:
 
 ```kotlin
-if (abs(diffX) > 5 || abs(diffY) > 5) {  // 5 pixel è il threshold
-    // Aumenta il numero per renderlo meno sensibile
-    // Riduci per renderlo più sensibile
-}
+"⛰ ${altitudeCorretta}m (±${accuracy}m)"
 ```
 
-### Aggiungi più Informazioni all'Overlay
+Puoi cambiare il formato, aggiungere campi dalla classe `Location` o convertire le unità.
 
-Aggiungi campi aggiuntivi nell'overlay:
+## Aggiungere un preset della correzione geoide
 
-```kotlin
-// Aggiungi dopo speedText:
-val accuracyText = TextView(this).apply {
-    text = "Accuratezza: --"
-    textSize = 12f
-    setTextColor(0xFF999999.toInt())
-    setPadding(16, 2, 16, 2)
-}
+Esempio: un nuovo pulsante per un'altra zona.
 
-overlayContainer.addView(accuracyText)
+1. In `res/layout/activity_main.xml` aggiungi un pulsante accanto a quelli esistenti (`btn_preset_italia`, `btn_preset_uk`, `btn_preset_custom`).
+2. In `res/values/strings.xml` e `res/values-it/strings.xml` aggiungi il testo, per esempio `preset_francia`.
+3. In `MainActivity.kt` collega il pulsante con `applyPreset(valore)`, come già fatto per Italia (47) e UK (55), e includilo in `updatePresetSelection()` perché si evidenzi quando il valore corrisponde.
 
-// E aggiorna in updateOverlay():
-accuracyText.text = "Accuratezza: ±${accuracy}m"
-```
+## Palette e stile
 
-## 📊 Confronto Base vs Avanzata
+I colori dell'interfaccia sono in `res/values/colors.xml` (palette Trail):
 
-| Funzionalità | Base | Avanzata |
-|--------------|------|----------|
-| Mostra Altitudine | ✅ | ✅ |
-| Mostra Accuratezza | ✅ | ✅ |
-| Mostra Velocità | ❌ | ✅ |
-| Overlay Trascinabile | ❌ | ✅ |
-| Aggiornamenti GPS | ✅ | ✅ |
-| Servizio Foreground | ✅ | ✅ |
+| Nome | Valore | Uso |
+|---|---|---|
+| `trail_background` | `#F6F2E9` | sfondo |
+| `trail_text_primary` | `#22301F` | testo principale |
+| `trail_text_secondary` | `#5C6B53` | testo secondario |
+| `trail_text_hint` | `#8A9280` | testo attenuato |
+| `trail_border` | `#DDD4C0` | bordi e separatori |
+| `trail_green` | `#5C8A3F` | accento principale, pallino di slider e switch |
+| `trail_orange` | `#E8622C` | accento secondario, pulsante principale |
+| `trail_orange_bg` | `#FFF3EC` | sfondo del preset selezionato |
+| `trail_card_white` | `#FFFFFF` | schede |
+| `trail_track` | `#948B76` | traccia dell'interruttore accuratezza |
 
-## 🔧 Troubleshooting Versione Avanzata
+Il font è Manrope, dichiarato su ogni `TextView` con `android:fontFamily`. Non impostarlo a livello di tema in `styles.xml`: sovrascriverebbe i singoli pesi.
 
-### L'overlay non si sposta
-- Assicurati di usare `LocationOverlayServiceAdvanced`
-- Verifica che il flag `FLAG_NOT_FOCUSABLE` sia impostato (permet al tocco di passare)
+## Localizzazione
 
-### La velocità mostra 0
-- Aspetta che l'app rilevi il movimento
-- La velocità è calcolata dal GPS, non sempre disponibile all'inizio
+I testi sono in `res/values/strings.xml` (inglese, predefinito) e `res/values-it/strings.xml` (italiano). Per aggiungere una lingua crea la cartella `values-xx` con le stesse chiavi.
 
-### Overlay salta quando trascinato
-- È normale se il tocco viene interpretato come scroll
-- Aumenta il threshold di sensibilità (cambia 5 a 10)
+## Aspetti da conoscere per Google Play
 
-## 💡 Tips & Tricks
+- Il servizio dichiara `foregroundServiceType="location"` e il permesso `FOREGROUND_SERVICE_LOCATION`: sono richiesti dalle versioni recenti di Android e Play chiede una dichiarazione d'uso in Console.
+- `compileSdk` e `targetSdk` sono 36, come richiesto da Play per nuove app e aggiornamenti.
+- `onBackPressed` non è usato; resta da sostituire `startActivityForResult` in `MainActivity` (deprecato) con l'API Activity Result, intervento di pulizia non urgente.
 
-1. **Posiziona l'overlay strategicamente**
-   - Sopra l'indicatore di connessione
-   - In un angolo non utilizzato da Maps
-   - Utilizza `lastX` e `lastY` per salvare la posizione
+## Idee di estensione
 
-2. **Riduci consumo batteria**
-   ```kotlin
-   Priority.PRIORITY_BALANCED_POWER_ACCURACY  // Meno preciso ma più efficiente
-   ```
-
-3. **Aggiorna frequenza**
-   ```kotlin
-   LocationRequest.Builder(Priority, 500)  // Ogni 0.5 secondi (più fluido)
-   ```
-
-4. **Nasconde l'overlay durante inattività**
-   Puoi aggiungere un timer che nasconde l'overlay se non c'è movimento GPS per 30 secondi
-
-## 🎯 Possibili Estensioni
-
-1. **Salvare Posizione dell'Overlay**
-   - Salva x, y in SharedPreferences
-   - Ripristina quando il servizio si avvia di nuovo
-
-2. **Cambiare Tema**
-   - Aggiungi un Intent con i colori personalizzati
-   - Permetti all'utente di scegliere tra scuro/chiaro
-
-3. **Notifiche Intelligenti**
-   - Avvisa quando si raggiunge un'altitudine target
-   - Registra i valori massimi/minimi
-
-4. **Esportazione Dati**
-   - Salva cronologia altitudine/velocità
-   - Esporta in CSV o KML per MapMyRun, Strava, ecc.
-
-## 📝 Note Importanti
-
-- La versione avanzata ha un consumo batteria leggermente superiore (carica aggiuntiva per il trascinamento)
-- Il touch listener potrebbe interferire con app con overlay propri
-- Testare su dispositivi diversi per garantire compatibilità
-
----
-
-**Goditi l'overlay avanzato!** 🚀
+- Mostrare altre informazioni dalla classe `Location`, come velocità o direzione.
+- Unità di misura in piedi.
+- Altri preset della correzione geoide, oppure calcolo automatico della correzione dalla posizione.
+- Impostazioni per colore e trasparenza dell'overlay.
