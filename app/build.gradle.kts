@@ -15,12 +15,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.trevi020.fastigum"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.trevi020.fastigum"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 9
         versionName = "0.7.1"
     }

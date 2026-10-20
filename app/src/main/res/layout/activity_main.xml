@@ -268,7 +268,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:thumbTint="@color/trail_green"
-                android:trackTint="@color/trail_border"
+                android:trackTint="@color/trail_track"
                 android:fontFamily="@font/manrope_medium" />
 
         </LinearLayout>

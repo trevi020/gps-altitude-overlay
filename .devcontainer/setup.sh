@@ -8,7 +8,7 @@ TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076
 SDKMANAGER="$SDK/cmdline-tools/latest/bin/sdkmanager"
 
 # Adegua questi pacchetti a compileSdk / build-tools del progetto
-SDK_PACKAGES=("platform-tools" "platforms;android-34" "build-tools;34.0.0")
+SDK_PACKAGES=("platform-tools" "platforms;android-36" "build-tools;35.0.0")
 
 if [ ! -x "$SDKMANAGER" ]; then
   echo "Scarico Android command-line tools..."

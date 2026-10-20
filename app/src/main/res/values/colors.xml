@@ -9,4 +9,5 @@
     <color name="trail_orange">#E8622C</color>
     <color name="trail_orange_bg">#FFF3EC</color>
     <color name="trail_card_white">#FFFFFF</color>
+    <color name="trail_track">#948B76</color>
 </resources>
