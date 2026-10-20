@@ -21,8 +21,8 @@ android {
         applicationId = "com.trevi020.fastigum"
         minSdk = 21
         targetSdk = 34
-        versionCode = 8
-        versionName = "0.7.0"
+        versionCode = 9
+        versionName = "0.7.1"
     }
 
     signingConfigs {
