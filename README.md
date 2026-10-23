@@ -15,7 +15,7 @@ App Android che mostra un overlay flottante con l'altitudine GPS in tempo reale,
 
 ## ⬇️ Download
 
-Fastigum è distribuita come app a pagamento su Google Play (in arrivo). Su GitHub trovi il codice sorgente di ogni versione nella pagina delle [Release](../../releases/latest): per usarlo, compilalo seguendo la sezione *Build da sorgente* qui sotto.
+Fastigum è distribuita come app a pagamento su Google Play (in arrivo). Su GitHub trovi il codice sorgente di ogni versione nella pagina delle [Release](../../releases/latest) e l'apk delle versioni precedenti.
 
 ## ✨ Funzionalità
 
